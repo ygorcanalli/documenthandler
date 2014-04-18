@@ -1,4 +1,5 @@
-from model.conteudo import Documento
+from model.content import Document
 
-documento = Documento("input.txt")
-print documento.__str__()
+documentStr = str(open("input.txt", "r").read())
+document = Document(documentStr)
+print document.__str__()

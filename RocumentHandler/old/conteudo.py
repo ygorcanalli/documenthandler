@@ -13,10 +13,10 @@ class Conteudo(object):
         '''
         Constructor
         '''
-        self.lista = Parte_documento()
+        self.elements = Parte_documento()
         
     def __str__(self):
-        result = self.__class__.__name__ + "->" + self.lista.__str__()
+        result = self.__class__.__name__ + "->" + self.elements.__str__()
         
         return result  
         
@@ -31,46 +31,46 @@ class Parte_documento(object):
         '''
         Constructor
         '''
-        self.lista_elementos = []
+        self.list = []
         
     def add(self, elem):
-        self.lista_elementos.append(elem)
+        self.list.append(elem)
         
     def __str__(self):
         result = ""
-        for listai in self.lista_elementos:
+        for listai in self.list:
             result += listai.__str__() + "\n"
         return result
         
         
 class Documento:
     
-    def __init__(self, path):
-        self.lista_paragrafos = Parte_documento()
-        conteudo = open(str(path), "r").read()
+    def __init__(self, original_string):
+        self.elements = Parte_documento()
+        conteudo = open(str(original_string), "r").read()
         splited = conteudo.split("\n\n")
         for i in range(len(splited)):
-            self.lista_paragrafos.add(Paragrafo(splited[i]))
+            self.elements.add(Paragrafo(splited[i]))
             
     def __str__(self):
-        return self.lista_paragrafos.__str__()
+        return self.elements.__str__()
             
     
     
         
 class Paragrafo (Conteudo):
     
-    def __init__(self, content):
-        self.lista = Parte_documento()
-        splited = content.split(".")
+    def __init__(self, original_string):
+        self.elements = Parte_documento()
+        splited = original_string.split(".")
         for i in range(len(splited)):
-            self.lista.add(Frase(splited[i]))
+            self.elements.add(Frase(splited[i]))
             
 class Frase (Conteudo):
     
-    def __init__(self, content):
-        self.lista = Parte_documento()
-        splited = content.split(" ")
+    def __init__(self, original_string):
+        self.elements = Parte_documento()
+        splited = original_string.split(" ")
         for i in range(len(splited)):
-            self.lista.add(splited[i])
+            self.elements.add(splited[i])
         

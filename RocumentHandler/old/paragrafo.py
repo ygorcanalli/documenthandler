@@ -2,9 +2,9 @@ from model.frase import Frase
 
 class Paragrafo(object):
     
-    def __init__(self, content):
+    def __init__(self, original_string):
         self.frases = []
-        splited = content.split(".")
+        splited = original_string.split(".")
         for i in range(len(splited)):
             self.frases.append(Frase(splited[i]))
     

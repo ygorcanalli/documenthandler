@@ -1,8 +1,8 @@
 class Frase(object):
     
-    def __init__(self, content):
+    def __init__(self, original_string):
         self.palavras = []
-        splited = content.split(" ")
+        splited = original_string.split(" ")
         for i in range(len(splited)):
             self.palavras.append(splited[i])
     

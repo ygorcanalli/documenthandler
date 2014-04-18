@@ -4,9 +4,9 @@ class Texto(object):
     
     conteudo = ""
 
-    def __init__(self, path):
+    def __init__(self, original_string):
         self.paragrafos = []
-        conteudo = open(str(path), "r").read()
+        conteudo = open(str(original_string), "r").read()
         splited = conteudo.split("\n\n")
         for i in range(len(splited)):
             self.paragrafos.append(Paragrafo(splited[i]))
