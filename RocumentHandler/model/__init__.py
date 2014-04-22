@@ -1,23 +1,48 @@
 from model.content import Document
 
-documentStr = str(open("input.txt", "r").read())
+# Read tex
+inputStr = str(open("input.txt", "r").read())
 
-document = Document(documentStr)
+document = Document(inputStr)
+paragraphs = document.get_paragraphs()
+sentences = document.get_sentences()
 words = document.get_words()
+chars = document.get_chars()
 
-# print document.__str__()
-'''
-for wordsi in words:
-    print wordsi
-'''   
+documentStr = document.__str__()
 
-for wordsi in words:
-    print wordsi.__str__()
+paragraphsStr = ""
+for paragraphsi in paragraphs:
+    paragraphsStr += paragraphsi.__str__()
     
-outputStr = document.__str__()
-# print outputStr
+sentencesStr = ""
+for elemi in sentences:
+    sentencesStr += elemi.__str__()
+    
+wordsStr = ""
+for elemi in words:
+    wordsStr += elemi.__str__()
+    
+charsStr = ""
+for elemi in chars:
+    charsStr += elemi.__str__()
+    
+output = open("document.txt", "w")
+output.write(documentStr)
 
-output = open("output.txt", "w")
-output.write(outputStr)
+output = open("paragraphs.txt", "w")
+output.write(paragraphsStr)
+
+output = open("sentences.txt", "w")
+output.write(sentencesStr)
+
+output = open("words.txt", "w")
+output.write(wordsStr)
+
+output = open("chars.txt", "w")
+output.write(charsStr)
+    
+
+
 
 

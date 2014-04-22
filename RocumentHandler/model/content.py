@@ -88,7 +88,7 @@ class Document (Content):
                 self.elements.add(Paragraph(splitedi))
                         
     def __str__(self):
-        return self.elements.__str__()
+        return "========" + self.__class__.__name__ + "========" + self.elements.__str__()
 
     
     def get_paragraphs(self):
