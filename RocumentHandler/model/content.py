@@ -184,6 +184,7 @@ class Word (Content):
     
     def get_chars(self):
         return super(Word, self).get_chars()
+        
             
 class Char (Content):
     
@@ -206,6 +207,14 @@ class Char (Content):
     
     def get_chars(self):
         return [self]
-        
+    
+    def __key(self):
+        return self.elements.list[0]
+
+    def __eq__(self, y):
+        return self.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
 
         

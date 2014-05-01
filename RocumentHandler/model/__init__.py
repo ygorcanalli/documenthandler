@@ -1,8 +1,9 @@
-from model.content import Document
+from model.content import *
 from compare.distance import levensthein
 from model.container import *
 
 # Read text
+'''
 inputStr = str(open("input.txt", "r").read())
   
 document = Document(inputStr)
@@ -72,3 +73,18 @@ print "\n==From set=="
 print my_set.to_list()
 print my_set.to_bag()
 print my_set
+
+ygor = Word("Canalli")
+ygor_chars = ygor.get_chars()
+
+ygor_chars_bag = Bag(ygor_chars)
+print("\nbag of chars my name\n")
+print ygor
+print ygor_chars_bag
+'''
+x = Word("Fellipe")
+y = Word("Filipe")
+
+lev = levensthein(x.get_chars(), y.get_chars())
+print "Lev(x,y) = " + str(lev)
+
