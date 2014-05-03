@@ -158,7 +158,6 @@ void* hlevenshtein(void* arg)
 
 	for (i = 1;  i < range + 1; i++)
 	{
-
 		/*decrease vertical semaphore*/
 		if((!flagMin) || (i > 1))
 			sem_wait(&vsem);
@@ -185,6 +184,7 @@ void* hlevenshtein(void* arg)
 			else
 				d[i][j] = MIN3(d[i-1][j] + DEL_COST, d[i][j-1] + INS_COST, d[i-1][j-1] + EXC_COST);
 		}
+		printf("\ni: %d - range: %d", i, range);
 	}
 
 	return 0;
@@ -201,13 +201,13 @@ void* vlevenshtein(void* arg)
 
 	int i, j;
 	int range = MIN(len_s, len_t);
-	int flagMin = len_s < len_t;
+	int flagMin = len_s < len_t; //len_t >= len_S
 
 	for (j = 1;  j < range + 1; j++)
 	{	
 		
 		/*decrease vertical semaphore*/
-		if((!flagMin) || (i > 1))
+		if((!flagMin) || (j > 1))
 			sem_wait(&hsem);
 
 		/*computing levenshtein distante for first case*/
@@ -231,6 +231,7 @@ void* vlevenshtein(void* arg)
 			else
 				d[i][j] = MIN3(d[i-1][j] + DEL_COST, d[i][j-1] + INS_COST, d[i-1][j-1] + EXC_COST);
 		}
+		printf("\nj: %d - range: %d", i, range);
 	}
 
 	return 0;
