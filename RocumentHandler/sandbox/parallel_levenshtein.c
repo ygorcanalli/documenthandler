@@ -184,7 +184,6 @@ void* hlevenshtein(void* arg)
 			else
 				d[i][j] = MIN3(d[i-1][j] + DEL_COST, d[i][j-1] + INS_COST, d[i-1][j-1] + EXC_COST);
 		}
-		printf("\ni: %d - range: %d", i, range);
 	}
 
 	return 0;
@@ -231,7 +230,6 @@ void* vlevenshtein(void* arg)
 			else
 				d[i][j] = MIN3(d[i-1][j] + DEL_COST, d[i][j-1] + INS_COST, d[i-1][j-1] + EXC_COST);
 		}
-		printf("\nj: %d - range: %d", i, range);
 	}
 
 	return 0;
