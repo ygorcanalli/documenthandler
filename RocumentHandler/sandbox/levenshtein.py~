@@ -75,7 +75,7 @@ def levensthein(s, t):
 			else:
 				d[j][i] = min(d[j-1][i] + DEL_COST, d[j][i-1] + INS_COST, d[j-1][i-1] + EXC_COST)
 
-	return d[len_s][len_t]
+	return d[len_s][len_t] #return d[m][n]
 
 #call main method
 main()

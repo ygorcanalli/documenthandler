@@ -29,13 +29,13 @@ def main():
 	
 	#call levensthein
 	if(dynamicProgramming == 1):
-		print "The levesthein distance between words: '" + s + "' and '" + t + "' is " + str(levensthein(s, t))
+		print "The levenshtein distance between words: '" + s + "' and '" + t + "' is " + str(levenshtein(s, t))
 	else:
-		print "The levesthein distance between words: '" + s + "' and '" + t + "' is " + str(levenstheinDistance(s, t))
+		print "The levenshtein distance between words: '" + s + "' and '" + t + "' is " + str(levenshteinDistance(s, t))
 
 
-#levensthein distance
-def levenstheinDistance(s, t):
+#levenshtein distance
+def levenshteinDistance(s, t):
 	
 	len_s = len(s)
 	len_t = len(t)
@@ -54,28 +54,29 @@ def levenstheinDistance(s, t):
 	return min(levenstheinDistance(s[:len_s - 1], t[:len_t - 1]) + cost, levenstheinDistance(s, t[:len_t - 1]) + INS_COST, levenstheinDistance(s[:len_s - 1], t) + DEL_COST)
 
 
-#levensthein distance dynamic programming
-def levensthein(s, t):
+#levenshtein distance dynamic programming
+def levenshtein(s, t):
 
 	len_s = len(s) #size m
 	len_t = len(t) #size n
 
-	d = [[0 for i in range(len_t+1)] for j in range(len_s+1)] #d[m][n]
+	d = [[0 for j in range(len_t+1)] for i in range(len_s+1)] #d[m+1][n+1]
 
-	for i in range(0, len_t+1): #0..m
-		d[0][i] = i
+	for j in range(0, len_t+1): #0..m
+		d[0][j] = j
 
-	for j in range(0, len_s+1): #0..n
-		d[j][0] = j
+	for i in range(0, len_s+1): #0..n
+		d[i][0] = i
 
-	for j in range(1, len_s+1): #1..n
-		for i in range(1, len_t+1): #1..m
-			if s[j-1] == t[i-1]:
-				d[j][i] = d[j-1][i-1]
+	for i in range(1, len_s+1): #1..n
+		for j in range(1, len_t+1): #1..m
+			if s[i-1] == t[j-1]:
+				d[i][j] = min(d[i-1][j] + DEL_COST, d[i][j-1] + INS_COST, d[i-1][j-1])
 			else:
-				d[j][i] = min(d[j-1][i] + DEL_COST, d[j][i-1] + INS_COST, d[j-1][i-1] + EXC_COST)
+				d[i][j] = min(d[i-1][j] + DEL_COST, d[i][j-1] + INS_COST, d[i-1][j-1] + EXC_COST)
 
 	return d[len_s][len_t] #return d[m][n]
 
 #call main method
-main()
+if __name__ == "__main__":
+	main()
