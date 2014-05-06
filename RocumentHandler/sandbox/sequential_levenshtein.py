@@ -51,7 +51,7 @@ def levenshteinDistance(s, t):
 	else:
 		cost = EXC_COST
 
-	return min(levenstheinDistance(s[:len_s - 1], t[:len_t - 1]) + cost, levenstheinDistance(s, t[:len_t - 1]) + INS_COST, levenstheinDistance(s[:len_s - 1], t) + DEL_COST)
+	return min(levenshteinDistance(s[:len_s - 1], t[:len_t - 1]) + cost, levenshteinDistance(s, t[:len_t - 1]) + INS_COST, levenshteinDistance(s[:len_s - 1], t) + DEL_COST)
 
 
 #levenshtein distance dynamic programming
