@@ -1,13 +1,13 @@
 import sys
 import getopt
-import threading
+import multiprocessing
 
 INS_COST = 1
 DEL_COST = 1
 EXC_COST  = 1
 
-vLock = threading.Semaphore(value = 0)
-hLock = threading.Semaphore(value = 0)
+vLock = multiprocessing.Semaphore(value = 0)
+hLock = multiprocessing.Semaphore(value = 0)
 
 def main():
 
@@ -50,7 +50,7 @@ def levenshtein(s, t):
 		d[i][0] = i
 
 	#call levenshtein
-	vthread = threading.Thread(target=vlevenshtein, args=(d, s, len_s, t, len_t)) 	#vertical in new thread
+	vthread = multiprocessing.Process(target=vlevenshtein, args=(d, s, len_s, t, len_t)) 	#vertical in new thread
 	vthread.start() #start new thread
 	hlevenshtein(d, s, len_s, t, len_t)	#horizontal in main thread
 	
