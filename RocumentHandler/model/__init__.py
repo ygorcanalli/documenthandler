@@ -1,90 +1,56 @@
-from model.content import *
-from compare.distance import levensthein
-from model.container import *
+from content import Document
+import sys, getopt, pickle
 
-# Read text
-'''
-inputStr = str(open("input.txt", "r").read())
-  
-document = Document(inputStr)
-paragraphs = document.get_paragraphs()
-sentences = document.get_sentences()
-words = document.get_words()
-chars = document.get_chars()
-  
-documentStr = document.__str__()
-  
-paragraphsStr = ""
-for paragraphsi in paragraphs:
-    paragraphsStr += paragraphsi.__str__()
-      
-sentencesStr = ""
-for elemi in sentences:
-    sentencesStr += elemi.__str__()
-      
-wordsStr = ""
-for elemi in words:
-    wordsStr += elemi.__str__()
-      
-charsStr = ""
-for elemi in chars:
-    charsStr += elemi.__str__()
-      
-output = open("document.txt", "w")
-output.write(documentStr)
-  
-output = open("paragraphs.txt", "w")
-output.write(paragraphsStr)
-  
-output = open("sentences.txt", "w")
-output.write(sentencesStr)
-  
-output = open("words.txt", "w")
-output.write(wordsStr)
-  
-output = open("chars.txt", "w")
-output.write(charsStr)
+def document_dump(input_file_name, output_file_name):
+    input_file = open(input_file_name, "r")
+    document = Document(input_file.read())
+    input_file.close()
+    
+    output_file = open(output_file_name, "wb")
+    pickle.dump(document, output_file)
+    output_file.close()
+    
+def document_backup(input_file_name, output_file_name):
+    input_file = open(input_file_name, "rb")
+    document = pickle.load(input_file)
+    input_file.close()
+    
+    output_file = open(output_file_name, "w")
+    output_file.write(str(document))
+    output_file.close()
 
-print "\n"
-print document
+# Read arguments from command line
+def __main__(argv):
+    input_file = ''
+    output_file = ''
+    operation = "dump"
+    try:
+        opts, args = getopt.getopt(argv,"bdhi:o:",["ifile=","ofile="])
+    except getopt.GetoptError:
+        print 'model <-b|-d> -i <inputfile> -o <outputfile>'
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print 'model <-b|-d> -i <inputfile> -o <outputfile>'
+            sys.exit()
+        elif opt in ("-i", "--ifile"):
+            input_file = arg
+        elif opt in ("-o", "--ofile"):
+            output_file = arg
+        elif opt in ("-b", "--backup"):
+            operation = "backup"
+        elif opt in ("-d", "--dump"):
+            operation = "dump"
+            
+    if operation == "backup":
+        document_backup(input_file, output_file)
+    else:
+        document_dump(input_file, output_file)
+    
 
-s = "YgorCanalliu"
-t =  "Ygor Canalli"
-print "\nlevenshtein(" + s +  ", " + t + ") = " + str(levensthein(s, t))
-print 
+if __name__ == "__main__":
+    __main__(sys.argv[1:])
+    
 
-#Container casts test
-my_list = List(["a", "b", "c", "a", "a", "c"])
-my_bag = my_list.to_bag()
-my_set = my_list.to_set()
-
-
-print "\n==From List=="
-print my_list
-print my_list.to_bag()
-print my_list.to_set()
-
-print "\n==From Bag=="
-print my_bag.to_list()
-print my_bag
-print my_bag.to_set()
-
-print "\n==From set=="
-print my_set.to_list()
-print my_set.to_bag()
-print my_set
-
-ygor = Word("Canalli")
-ygor_chars = ygor.get_chars()
-
-ygor_chars_bag = Bag(ygor_chars)
-print("\nbag of chars my name\n")
-print ygor
-print ygor_chars_bag
-'''
-x = Word("Fellipe")
-y = Word("Filipe")
-
-lev = levensthein(x.get_chars(), y.get_chars())
-print "Lev(x,y) = " + str(lev)
-
+    
+    

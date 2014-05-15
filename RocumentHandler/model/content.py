@@ -8,16 +8,28 @@ class Content(object):
     '''
     classdocs
     '''
-    
-    def __init__(self):
-        '''
-        Constructor
-        '''
-        self.elements = Content_part()
+    _separator = None
+        
+    def __init__(self, original_string):
+        self.elements = Content_part() 
+        splited = original_string.split(self._separator)
+        for splitedi in splited:
+            if splitedi != "":
+                self.elements.add(self._init_part(splitedi))
+        
+        
+    # initialize an instance of the type of the part of the current content type
+    def _init_part(self, original_string):
+        return None
         
     def __str__(self):
-        result = self.__class__.__name__ + ":\n" + self.elements.__str__()
+        result = ""
         
+        # iterate over elements, exept the last
+        for i in range(0, len(self.elements.list)-1):
+            result += str(self.elements.list[i]) + self._separator
+        # cocatenate with the last element
+        result += str(self.elements.list[len(self.elements.list)-1])
         return result
     
     def get_paragraphs(self):
@@ -49,6 +61,15 @@ class Content(object):
             for charsi in listi.get_chars():
                 result.append(charsi)
         return result
+    
+    def __key(self):
+        return self.__str__()
+
+    def __eq__(self, y):
+        return self.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
         
         
         
@@ -71,38 +92,17 @@ class Content_part(object):
         for elementsi in elements:
             self.list.append(elementsi)
         
-    def __str__(self):
-        result = ""
-        for listi in self.list:
-            result += listi.__str__()
-        return result
-        
         
 class Document (Content):
     
-    def __init__(self, original_string):
-        self.elements = Content_part() 
-        splited = original_string.split("\n\n")
-        for splitedi in splited:
-            if splitedi != "":
-                self.elements.add(Paragraph(splitedi))
-                        
-    def __str__(self):
-        return "========" + self.__class__.__name__ + "========" + self.elements.__str__()
-
+    _separator = "\n\n"
+    
+    def _init_part(self, original_string):
+        return Paragraph(original_string)
     
     def get_paragraphs(self):
         return super(Document, self).get_paragraphs()
     
-    '''
-    def get_paragraphs(self):
-        result = []
-        for listi in self.elements.list:
-            for wordsi in listi.get_paragraphs():
-                result.append(wordsi)
-            
-        return result     
-    '''      
     def get_sentences(self):
         return super(Document, self).get_sentences()
     
@@ -116,17 +116,10 @@ class Document (Content):
         
 class Paragraph (Content):
     
-    def __init__(self, original_string):
-        self.elements = Content_part()
-        splited = original_string.split(".")
-        for splitedi in splited:
-            if splitedi != "":
-                self.elements.add(Sentence(splitedi))
-                
-    def __str__(self):
-        result = "\n-------" + self.__class__.__name__ + "-------\n" + self.elements.__str__() + "-----------------------\n"
-        
-        return result
+    _separator = ". "
+    
+    def _init_part(self, original_string):
+        return Sentence(original_string)
             
     def get_paragraphs(self):
         return [self]
@@ -142,12 +135,10 @@ class Paragraph (Content):
                
 class Sentence (Content):
     
-    def __init__(self, original_string):
-        self.elements = Content_part()
-        splited = original_string.split(" ")
-        for splitedi in splited:
-            if splitedi != "":
-                self.elements.add(Word(splitedi))
+    _separator = " "
+     
+    def _init_part(self, original_string):
+        return Word(original_string)
     
     def get_paragraphs(self):
         return None
@@ -163,15 +154,17 @@ class Sentence (Content):
             
 class Word (Content):
     
+    _separator = ""
+    
     def __init__(self, original_string):
-        self.elements = Content_part()
-        for original_stringi in original_string:
-            if original_stringi != "":
-                self.elements.add(Char(original_stringi))
-            
-    def __str__(self):
-        result = "\t" + self.__class__.__name__ + ": " + self.elements.__str__() + "\n"
-        return result
+        self.elements = Content_part() 
+        splited = original_string
+        for splitedi in splited:
+            if splitedi != "":
+                self.elements.add(self._init_part(splitedi))
+    
+    def _init_part(self, original_string):
+        return Char(original_string)
            
     def get_paragraphs(self):
         return None
@@ -207,14 +200,5 @@ class Char (Content):
     
     def get_chars(self):
         return [self]
-    
-    def __key(self):
-        return self.elements.list[0]
-
-    def __eq__(self, y):
-        return self.__key() == y.__key()
-
-    def __hash__(self):
-        return hash(self.__key())
 
         
