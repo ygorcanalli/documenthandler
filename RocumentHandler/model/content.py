@@ -3,6 +3,7 @@ Created on Apr 17, 2014
 
 @author: ygor
 '''
+from container import List
 
 class Content(object):
     '''
@@ -33,7 +34,7 @@ class Content(object):
         return result
     
     def get_paragraphs(self):
-        result = []
+        result = List()
         for listi in self.elements.list:
             for wordsi in listi.get_paragraphs():
                 result.append(wordsi)
@@ -41,14 +42,14 @@ class Content(object):
         return result
     
     def get_sentences(self):
-        result = []
+        result = List()
         for listi in self.elements.list:
             for sentencesi in listi.get_sentences():
                 result.append(sentencesi)
         return result
     
     def get_words(self):
-        result = []
+        result = List()
         for listi in self.elements.list:
             for wordsi in listi.get_words():
                 result.append(wordsi)
@@ -56,7 +57,7 @@ class Content(object):
         return result
     
     def get_chars(self):
-        result = []
+        result = List()
         for listi in self.elements.list:
             for charsi in listi.get_chars():
                 result.append(charsi)
@@ -82,7 +83,7 @@ class Content_part(object):
         '''
         Constructor
         '''
-        self.list = []
+        self.list = List()
         
 #     add an element to the list 
     def add(self, elem):
@@ -122,7 +123,9 @@ class Paragraph (Content):
         return Sentence(original_string)
             
     def get_paragraphs(self):
-        return [self]
+        result = List()
+        result.append(self)
+        return result
             
     def get_sentences(self):
         return super(Paragraph, self).get_sentences()
@@ -144,7 +147,9 @@ class Sentence (Content):
         return None
     
     def get_sentences(self):
-        return [self]
+        result = List()
+        result.append(self)
+        return result
             
     def get_words(self):
         return super(Sentence, self).get_words()
@@ -173,7 +178,9 @@ class Word (Content):
         return None
             
     def get_words(self):
-        return [self]
+        result = List()
+        result.append(self)
+        return result
     
     def get_chars(self):
         return super(Word, self).get_chars()
@@ -199,6 +206,8 @@ class Char (Content):
         return None
     
     def get_chars(self):
-        return [self]
+        result = List()
+        result.append(self)
+        return result
 
         
