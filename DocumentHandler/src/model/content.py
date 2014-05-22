@@ -1,15 +1,16 @@
-'''
+"""
 Created on Apr 17, 2014
 
 @author: ygor
-'''
+"""
 import abc
 from container import List
 
+
 class Content(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
     __metaclass__ = abc.ABCMeta
 
@@ -22,47 +23,47 @@ class Content(object):
     _separator = None
 
     @classmethod
-    def create_document(self, original_string):
+    def create_document(cls, original_string):
         try:
-            my_document = self._documents[original_string]
+            my_document = cls._documents[original_string]
         except KeyError, e:
-            my_document = self._documents[original_string] = Document(original_string)
+            my_document = cls._documents[original_string] = Document(original_string)
 
         return my_document
 
     @classmethod
-    def create_paragraph(self, original_string):
+    def create_paragraph(cls, original_string):
         try:
-            my_paragraph = self._paragraphs[original_string]
+            my_paragraph = cls._paragraphs[original_string]
         except KeyError, e:
-            my_paragraph = self._paragraphs[original_string] = Paragraph(original_string)
+            my_paragraph = cls._paragraphs[original_string] = Paragraph(original_string)
 
         return my_paragraph
 
     @classmethod
-    def create_sentence(self, original_string):
+    def create_sentence(cls, original_string):
         try:
-            my_sentence = self._sentences[original_string]
+            my_sentence = cls._sentences[original_string]
         except KeyError, e:
-            my_sentence = self._sentences[original_string] = Sentence(original_string)
+            my_sentence = cls._sentences[original_string] = Sentence(original_string)
 
         return my_sentence
 
     @classmethod
-    def create_word(self, original_string):
+    def create_word(cls, original_string):
         try:
-            my_word = self._words[original_string]
+            my_word = cls._words[original_string]
         except KeyError, e:
-            my_word = self._words[original_string] = Word(original_string)
+            my_word = cls._words[original_string] = Word(original_string)
 
         return my_word
 
     @classmethod
-    def create_char(self, original_string):
+    def create_char(cls, original_string):
         try:
-            my_char = self._chars[original_string]
+            my_char = cls._chars[original_string]
         except KeyError, e:
-            my_char = self._chars[original_string] = Char(original_string)
+            my_char = cls._chars[original_string] = Char(original_string)
 
         return my_char
 
@@ -72,8 +73,7 @@ class Content(object):
         for splitedi in splited:
             if splitedi != "":
                 self.elements.add(self._init_part(splitedi))
-        
-        
+
     # initialize an instance of the type of the part of the current content type
     @abc.abstractmethod
     def _init_part(self, original_string):
@@ -131,14 +131,13 @@ class Content(object):
         
         
 class Content_part(object):
-    '''
+    """
     classdocs
-    '''
-
+    """
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
+        """
         self.list = List()
         
 #     add an element to the list 
@@ -216,9 +215,11 @@ class Sentence (Content):
 class Word (Content):
     
     _separator = ""
-    
+
+    # noinspection PyMissingConstructor
     def __init__(self, original_string):
-        self.elements = Content_part() 
+
+        self.elements = Content_part()
         splited = original_string
         for splitedi in splited:
             if splitedi != "":
@@ -243,7 +244,8 @@ class Word (Content):
         
             
 class Char (Content):
-    
+
+    # noinspection PyMissingConstructor
     def __init__(self, original_string):
         self.elements = Content_part()
         if original_string != "":

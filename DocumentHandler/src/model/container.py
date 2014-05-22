@@ -1,9 +1,10 @@
-'''
+"""
 Created on Apr 30, 2014
 
 @author: ygor
-'''
+"""
 from collections import Counter
+
 
 class List(list):
     def to_bag(self):
@@ -20,7 +21,8 @@ class List(list):
     def __str__(self):
         return "List(" + super(List, self).__str__() + ")"
     
-class Bag(Counter):  
+
+class Bag(Counter):
     def to_bag(self):
         return self
     
@@ -30,6 +32,7 @@ class Bag(Counter):
     def to_set(self):
         return Set(self)
     
+
 class Set(set):
     def to_bag(self):
         result = Bag()

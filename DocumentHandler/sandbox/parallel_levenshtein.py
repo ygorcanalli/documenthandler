@@ -4,7 +4,7 @@ import multiprocessing
 
 INS_COST = 1
 DEL_COST = 1
-EXC_COST  = 1
+EXC_COST = 1
 
 vLock = multiprocessing.Semaphore(value = 0)
 hLock = multiprocessing.Semaphore(value = 0)

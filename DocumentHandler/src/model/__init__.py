@@ -13,6 +13,7 @@ def document_dump(input_file_name, output_file_name):
     pickle.dump(document, output_file)
     output_file.close()
     
+
 def document_backup(input_file_name, output_file_name):
     input_file = open(input_file_name, "rb")
     document = pickle.load(input_file)
@@ -22,13 +23,14 @@ def document_backup(input_file_name, output_file_name):
     output_file.write(str(document))
     output_file.close()
 
+
 # Read arguments from command line
 def __main__(argv):
     input_file = ''
     output_file = ''
     operation = "dump"
     try:
-        opts, args = getopt.getopt(argv,"bdhi:o:",["ifile=","ofile="])
+        opts, args = getopt.getopt(argv, "bdhi:o:", ["ifile=", "ofile="])
     except getopt.GetoptError:
         print 'model <-b|-d> -i <inputfile> -o <outputfile>'
         sys.exit(2)
@@ -53,7 +55,3 @@ def __main__(argv):
 
 if __name__ == "__main__":
     __main__(sys.argv[1:])
-    
-
-    
-    

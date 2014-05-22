@@ -3,7 +3,7 @@ import getopt
 
 INS_COST = 1
 DEL_COST = 1
-EXC_COST  = 1
+EXC_COST = 1
 
 def main():
 
@@ -28,7 +28,7 @@ def main():
 			dynamicProgramming = 1
 	
 	#call levensthein
-	if(dynamicProgramming == 1):
+	if dynamicProgramming == 1:
 		print "The levenshtein distance between words: '" + s + "' and '" + t + "' is " + str(levenshtein(s, t))
 	else:
 		print "The levenshtein distance between words: '" + s + "' and '" + t + "' is " + str(levenshteinDistance(s, t))
