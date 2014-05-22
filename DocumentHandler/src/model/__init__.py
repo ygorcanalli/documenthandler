@@ -1,9 +1,12 @@
-from content import Document
-import sys, getopt, pickle
+from content import Content
+import sys
+import getopt
+import pickle
+
 
 def document_dump(input_file_name, output_file_name):
     input_file = open(input_file_name, "r")
-    document = Document(input_file.read())
+    document = Content.create_document(input_file.read())
     input_file.close()
     
     output_file = open(output_file_name, "wb")

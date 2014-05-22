@@ -3,14 +3,69 @@ Created on Apr 17, 2014
 
 @author: ygor
 '''
+import abc
 from container import List
 
 class Content(object):
     '''
     classdocs
     '''
+
+    __metaclass__ = abc.ABCMeta
+
+    _documents = {}
+    _paragraphs = {}
+    _sentences = {}
+    _words = {}
+    _chars = {}
+
     _separator = None
-        
+
+    @classmethod
+    def create_document(self, original_string):
+        try:
+            my_document = self._documents[original_string]
+        except KeyError, e:
+            my_document = self._documents[original_string] = Document(original_string)
+
+        return my_document
+
+    @classmethod
+    def create_paragraph(self, original_string):
+        try:
+            my_paragraph = self._paragraphs[original_string]
+        except KeyError, e:
+            my_paragraph = self._paragraphs[original_string] = Paragraph(original_string)
+
+        return my_paragraph
+
+    @classmethod
+    def create_sentence(self, original_string):
+        try:
+            my_sentence = self._sentences[original_string]
+        except KeyError, e:
+            my_sentence = self._sentences[original_string] = Sentence(original_string)
+
+        return my_sentence
+
+    @classmethod
+    def create_word(self, original_string):
+        try:
+            my_word = self._words[original_string]
+        except KeyError, e:
+            my_word = self._words[original_string] = Word(original_string)
+
+        return my_word
+
+    @classmethod
+    def create_char(self, original_string):
+        try:
+            my_char = self._chars[original_string]
+        except KeyError, e:
+            my_char = self._chars[original_string] = Char(original_string)
+
+        return my_char
+
     def __init__(self, original_string):
         self.elements = Content_part() 
         splited = original_string.split(self._separator)
@@ -20,6 +75,7 @@ class Content(object):
         
         
     # initialize an instance of the type of the part of the current content type
+    @abc.abstractmethod
     def _init_part(self, original_string):
         return None
         
@@ -97,9 +153,9 @@ class Content_part(object):
 class Document (Content):
     
     _separator = "\n\n"
-    
+
     def _init_part(self, original_string):
-        return Paragraph(original_string)
+        return Content.create_paragraph(original_string)
     
     def get_paragraphs(self):
         return super(Document, self).get_paragraphs()
@@ -120,7 +176,7 @@ class Paragraph (Content):
     _separator = ". "
     
     def _init_part(self, original_string):
-        return Sentence(original_string)
+        return Content.create_sentence(original_string)
             
     def get_paragraphs(self):
         result = List()
@@ -141,7 +197,7 @@ class Sentence (Content):
     _separator = " "
      
     def _init_part(self, original_string):
-        return Word(original_string)
+        return Content.create_word(original_string)
     
     def get_paragraphs(self):
         return None
@@ -169,7 +225,7 @@ class Word (Content):
                 self.elements.add(self._init_part(splitedi))
     
     def _init_part(self, original_string):
-        return Char(original_string)
+        return Content.create_char(original_string)
            
     def get_paragraphs(self):
         return None
@@ -192,7 +248,10 @@ class Char (Content):
         self.elements = Content_part()
         if original_string != "":
             self.elements.add(original_string)
-        
+
+    def _init_part(self, original_string):
+        return None
+
     def __str__(self):
         return self.elements.list[0]
     
@@ -210,4 +269,7 @@ class Char (Content):
         result.append(self)
         return result
 
-        
+Content.register(Paragraph)
+Content.register(Sentence)
+Content.register(Word)
+Content.register(Char)
