@@ -1,8 +1,8 @@
 all:
-	gcc parallel_levenshtein_v1.c -o pv1 -Wall -pthread -lpapi
-	gcc parallel_levenshtein_v2.c -o pv2 -Wall -pthread -lpapi
-	gcc parallel_levenshtein.c -o pv3 -Wall -pthread -lpapi
-	gcc sequential_levenshtein.c -o s -Wall -lpapi
+	gcc ../parallel_levenshtein_v1.c -o pv1 -Wall -pthread -lpapi
+	gcc ../parallel_levenshtein_v2.c -o pv2 -Wall -pthread -lpapi
+	gcc ../parallel_levenshtein.c -o pv3 -Wall -pthread -lpapi
+	gcc ../sequential_levenshtein.c -o s -Wall -lpapi
 	clear
 
 	./pv1 -s "`cat 1.test`" -t "`cat 2.test`"

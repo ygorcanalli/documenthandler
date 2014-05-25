@@ -36,9 +36,9 @@ dL'essentiel est invisible pour les yeux
 /*====================Structs===============================*/
 typedef struct
 {
-	char* s;
+	void* s;
 	int len_s;
-	char* t;
+	void* t;
 	int len_t;
 }levenshtein_args;
 /*==========================================================*/
