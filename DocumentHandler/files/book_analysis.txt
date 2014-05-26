@@ -1,0 +1,10 @@
+
+Distance(book1.p0, book2.p0) = 0
+Distance(book1.p0, book2.p1) = 686
+Distance(book1.p0, book2.p2) = 577
+Distance(book1.p1, book2.p0) = 686
+Distance(book1.p1, book2.p1) = 0
+Distance(book1.p1, book2.p2) = 202
+Distance(book1.p2, book2.p0) = 577
+Distance(book1.p2, book2.p1) = 202
+Distance(book1.p2, book2.p2) = 0

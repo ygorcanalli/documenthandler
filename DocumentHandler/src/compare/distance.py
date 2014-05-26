@@ -43,5 +43,4 @@ def levensthein(s, t):
             else:
                 d[i][j] = min(d[i-1][j] + DELETION_COST, d[i][j-1] + INSERTION_COST, d[i-1][j-1] + SUBSTITUITION_COST)
 
-    pprint(d)
     return d[n][m] #return d[n][m]
