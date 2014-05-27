@@ -5,7 +5,7 @@ Departamento de Tecnologia e Linguagens.
 Curso de Ciência da Computaćão.
 
 Autores: Alexsander Andrade de Melo e Ygor de Mello Canalli.
-Data (última atualização): 24/05/2014
+Data (última atualização): 25/05/2014
 
 dL'essentiel est invisible pour les yeux
 */
@@ -19,6 +19,7 @@ dL'essentiel est invisible pour les yeux
 #include <semaphore.h>
 #include <sys/types.h>
 #include <papi.h>
+#include "in.h"
 
 /*====================Macros================================*/
 #define MIN3(v1, v2, v3) MIN(MIN(v1, v2), v3)
@@ -53,12 +54,12 @@ void swap(void**, int*, void**, int*);
 
 
 /*====================Shared memory=========================*/
-unsigned int* md;	/*main diagonal distance*/
-unsigned int* sd;	/*secondary diagonal distance*/
+unsigned short int* md;	/*main diagonal distance*/
+unsigned short int* sd;	/*secondary diagonal distance*/
 pthread_mutex_t vmux; /*mutex*/
 pthread_mutex_t hmux; /*mutex*/
 
-unsigned int verticalReturn; /*return of vertical side*/
+unsigned short int verticalReturn; /*return of vertical side*/
 /*==========================================================*/
 
 /*====================Assumptions===========================*/
@@ -68,7 +69,7 @@ unsigned int verticalReturn; /*return of vertical side*/
 
 	Always len(s) <= len(t), otherwise make swap
 	len(diagonal(s, t)) = min(len(s), len(t) =>
-		len(diagonal(s, t) = len(s)
+		len(diagonal(s, t)) = len(s)
 
 	Levenshtein for horizontal side is priority
 */
@@ -81,10 +82,13 @@ int main(int argc, char** argv)
 	char* s;
 	char* t;
 	
-	unsigned int distance = 0;
+	unsigned short int distance = 0;
 
 	unsigned int len_s;
 	unsigned int len_t;
+
+	string* strs;
+	string* strt; 
 
 	/*for measuring time*/
 	long_long start_usec, end_usec;
@@ -94,10 +98,14 @@ int main(int argc, char** argv)
 		switch(c)
 		{
 			case 's':
-				s = optarg;
+				strs = readTextFromFile(optarg);
+				s = strs->content;
+				len_s = strs->len;
 				break;
 			case 't':
-				t = optarg;
+				strt = readTextFromFile(optarg);
+				t = strt->content;
+				len_t = strt->len;
 				break;
 			case '?':
 				if ((optopt == 's') || (optopt == 't'))
@@ -108,8 +116,6 @@ int main(int argc, char** argv)
 		}
 	}
 
-	len_s = strlen(s);
-	len_t = strlen(t);
 
 	/*get initial time*/
 	start_usec = PAPI_get_real_usec();
@@ -117,7 +123,7 @@ int main(int argc, char** argv)
 	/*computing levenshtein*/
 	distance = levenshtein(s, len_s, t, len_t);
 
-	/*computing final time*/
+	/*get final time*/
 	end_usec = PAPI_get_real_usec();
 
 	printf("\nThe levesthein distance: %d", distance);
@@ -125,7 +131,6 @@ int main(int argc, char** argv)
 
 	return 0;
 }
-
 
 
 int levenshtein(void* s, int len_s, void* t, int len_t)
@@ -136,6 +141,7 @@ int levenshtein(void* s, int len_s, void* t, int len_t)
 	levenshtein_args harg;
 
 	int sizeSD;
+	unsigned short int distance; /*return value*/
 
 	/*initalization horizontal semaphore*/
 	pthread_mutex_init(&vmux, NULL);
@@ -152,9 +158,9 @@ int levenshtein(void* s, int len_s, void* t, int len_t)
 	sizeSD = (len_s == len_t ? len_s : len_s + 1);
 
 	/*allocate main diagonal*/
-	md = (unsigned int*) malloc (sizeof(unsigned int) * (len_s + 1));
+	md = (unsigned short int*) malloc (sizeof(unsigned short int) * (len_s + 1));
 	/*allocate secondary diagonal*/
-	sd = (unsigned int*) malloc (sizeof(unsigned int) * (sizeSD));
+	sd = (unsigned short int*) malloc (sizeof(unsigned short int) * (sizeSD));
 
 	/*initialization of diagonals distance*/
 	md[0] = 0; sd[0] = 1;
@@ -173,17 +179,23 @@ int levenshtein(void* s, int len_s, void* t, int len_t)
 	pthread_join(vthread, NULL);
 
 	if(len_t == len_s)
-		return md[len_s];
+		distance = md[len_s];
 	else if((len_s + 1) < len_t)
-		return verticalReturn;
+		distance = verticalReturn;
 	else
-		return sd[len_s];
+		distance = sd[len_s];
+
+	/*free memory*/
+	free(md);
+	free(sd);
+
+	return distance;
 }
 
 
 void* hlevenshtein(void* arg)
 {
-	unsigned int **hm;
+	unsigned short int **hm;
 	levenshtein_args* la = (levenshtein_args*) arg;
 	char* s = la->s;
 	int len_s = la->len_s;
@@ -192,9 +204,9 @@ void* hlevenshtein(void* arg)
 	int i, j, k;
 
 	/*alocate horizontal distance matrix*/
-	hm = (unsigned int**) malloc (sizeof(unsigned int*) * len_s);
+	hm = (unsigned short int**) malloc (sizeof(unsigned short int*) * len_s);
 	for (i = 0; i < len_s; i++)
-			hm[i] = (unsigned int*) malloc (sizeof(unsigned int) * (len_s - i));
+			hm[i] = (unsigned short int*) malloc (sizeof(unsigned short int) * (len_s - i));
 
 	/*initialization of horizontal distance matrix*/
 	for(j = 0; j < len_s; j++)
@@ -259,13 +271,18 @@ void* hlevenshtein(void* arg)
 	pthread_mutex_unlock(&hmux);
 	/*==================================================================================*/
 
+	/*free memory*/
+	for (i = 0; i < len_s; i++)
+		free(hm[i]);
+	free(hm);
+
 	return 0;
 }
 
 
 void* vlevenshtein(void* arg)
 {
-	unsigned int **vm;
+	unsigned short int **vm;
 	levenshtein_args* la = (levenshtein_args*) arg;
 	char* s = la->s;
 	int len_s = la->len_s;
@@ -278,9 +295,9 @@ void* vlevenshtein(void* arg)
 
 
 	/*alocate vertical distance matrix*/
-	vm = (unsigned int**) malloc (sizeof(unsigned int*) * (sizeVM));
+	vm = (unsigned short int**) malloc (sizeof(unsigned short int*) * (sizeVM));
 	for (i = 0, k = len_t - 1; i < (sizeVM); i++, k--)
-			vm[i] = (unsigned int*) malloc (sizeof(unsigned int) * k);
+			vm[i] = (unsigned short int*) malloc (sizeof(unsigned short int) * k);
 
 	/*initialization of vertical distance matrix*/
 	for(k = 0; k < (len_t - 1); k++)
@@ -353,6 +370,11 @@ void* vlevenshtein(void* arg)
 		verticalReturn = vm[sizeVM - 1][0];
 	}
 
+	/*free memory*/
+	for (i = 0; i < (sizeVM); i++)
+		free(vm[i]);
+	free(vm);
+
 	return 0;
 }
 
@@ -371,5 +393,4 @@ void swap(void** s, int* len_s, void** t, int* len_t)
 	*s = aux;
 	*len_s = len_aux;
 }
-
 
