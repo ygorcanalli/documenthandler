@@ -19,8 +19,6 @@ string* readTextFromFile(char* path)
 	}
 
 	for(i = 0; !feof(file) && (str->content[i] = fgetc(file)) != '\0'; i++);
-
-	fclose(file);
 	
 	return str;
 }

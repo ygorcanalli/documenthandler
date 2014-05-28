@@ -12,6 +12,10 @@ def document_dump(input_file_name, output_file_name):
     output_file = open(output_file_name, "wb")
     pickle.dump(document, output_file)
     output_file.close()
+
+    paragraphs = document.get_words()
+    for p in paragraphs:
+       print p.__str__()
     
 
 def document_backup(input_file_name, output_file_name):

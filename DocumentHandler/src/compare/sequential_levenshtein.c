@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
-
 
 #define MIN3(v1, v2, v3) MIN(MIN(v1, v2), v3)
 #define MIN(v1, v2) (v1 <= v2 ? v1 : v2)
@@ -10,18 +10,18 @@
 #define DEL_COST 1
 #define EXC_COST 1
 
-int sequential_levenshtein(char*, int, char*, int);
-/*int levenshteinD(char*, int, char*, int);*/
+unsigned short int sequential_levenshtein(char*, int, char*, int);
 
-int sequential_levenshtein(char* s, int len_s, char* t, int len_t)
+unsigned short int sequential_levenshtein(char* s, int len_s, char* t, int len_t)
 {
-	int i, j;
-	unsigned int** d; //[len_s + 1][len_t + 1];
+	unsigned int i, j;
+	unsigned short int** d; //[len_s + 1][len_t + 1];
+	unsigned short int distance;
 
 	/*allocate distance matrix*/
-	d = (unsigned int**) malloc (sizeof(unsigned int*) * (len_s + 1));
+	d = (unsigned short int**) malloc (sizeof(unsigned short int*) * (len_s + 1));
 	for (i = 0; i < len_s + 1; i++)
-			d[i] = (unsigned int*) malloc (sizeof(unsigned int) * (len_t + 1));
+			d[i] = (unsigned short int*) malloc (sizeof(unsigned short int) * (len_t + 1));
 
 
 	for (i = 0;  i < (len_s + 1); i++)
@@ -41,5 +41,11 @@ int sequential_levenshtein(char* s, int len_s, char* t, int len_t)
 		}
 	}
 
-	return d[len_s][len_t];
+	distance = d[len_s][len_t];
+
+	/*free memory*/
+	for (i = 0; i < len_s + 1; i++)
+		free(d[i]);
+
+	return distance;
 }
