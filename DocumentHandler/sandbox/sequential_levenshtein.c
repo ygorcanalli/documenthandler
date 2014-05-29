@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <papi.h>
+#include "in.h"
 
 #define MIN3(v1, v2, v3) MIN(MIN(v1, v2), v3)
 #define MIN(v1, v2) (v1 <= v2 ? v1 : v2)
@@ -11,7 +12,7 @@
 #define DEL_COST 1
 #define EXC_COST 1
 
-int levenshtein(char*, int, char*, int);
+unsigned short int levenshtein(char*, int, char*, int);
 /*int levenshteinD(char*, int, char*, int);*/
 
 int main(int argc, char** argv)
@@ -21,8 +22,11 @@ int main(int argc, char** argv)
 	/*unsigned int flagDynamic = 0;*/
 	char* s;
 	char* t;
+
+	string* strs; 
+	string* strt;
 	
-	unsigned int distance = 0;
+	unsigned short int distance = 0;
 
 	unsigned int len_s;
 	unsigned int len_t;
@@ -37,10 +41,14 @@ int main(int argc, char** argv)
 		switch(c)
 		{
 			case 's':
-				s = optarg;
+				strs = readTextFromFile(optarg);
+				s = strs->content;
+				len_s = strs->len;
 				break;
 			case 't':
-				t = optarg;
+				strt = readTextFromFile(optarg);
+				t = strt->content;
+				len_t = strt->len;
 				break;
 			/*case 'D':
 				flagDynamic = 1;
@@ -54,8 +62,6 @@ int main(int argc, char** argv)
 		}
 	}
 
-	len_s = strlen(s);
-	len_t = strlen(t);
 
 	/*get initial time*/
 	start_usec = PAPI_get_real_usec();
@@ -79,15 +85,16 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-int levenshtein(char* s, int len_s, char* t, int len_t)
+unsigned short int levenshtein(char* s, int len_s, char* t, int len_t)
 {
-	int i, j;
-	unsigned int** d; //[len_s + 1][len_t + 1];
+	unsigned int i, j;
+	unsigned short int** d; //[len_s + 1][len_t + 1];
+	unsigned short int distance;
 
 	/*allocate distance matrix*/
-	d = (unsigned int**) malloc (sizeof(unsigned int*) * (len_s + 1));
+	d = (unsigned short int**) malloc (sizeof(unsigned short int*) * (len_s + 1));
 	for (i = 0; i < len_s + 1; i++)
-			d[i] = (unsigned int*) malloc (sizeof(unsigned int) * (len_t + 1));
+			d[i] = (unsigned short int*) malloc (sizeof(unsigned short int) * (len_t + 1));
 
 
 	for (i = 0;  i < (len_s + 1); i++)
@@ -107,7 +114,13 @@ int levenshtein(char* s, int len_s, char* t, int len_t)
 		}
 	}
 
-	return d[len_s][len_t];
+	distance = d[len_s][len_t];
+
+	/*free memory*/
+	for (i = 0; i < len_s + 1; i++)
+		free(d[i]);
+
+	return distance;
 }
 
 

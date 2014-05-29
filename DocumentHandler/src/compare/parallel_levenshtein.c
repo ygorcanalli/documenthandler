@@ -5,7 +5,7 @@ Departamento de Tecnologia e Linguagens.
 Curso de Ciência da Computaćão.
 
 Autores: Alexsander Andrade de Melo e Ygor de Mello Canalli.
-Data (última atualização): 24/05/2014
+Data (última atualização): 25/05/2014
 
 dL'essentiel est invisible pour les yeux
 */
@@ -13,9 +13,9 @@ dL'essentiel est invisible pour les yeux
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <pthread.h>
-#include <semaphore.h>
 #include <sys/types.h>
 
 /*====================Macros================================*/
@@ -35,30 +35,28 @@ dL'essentiel est invisible pour les yeux
 typedef struct
 {
 	void* s;
-	int len_s;
+	unsigned int len_s;
 	void* t;
-	int len_t;
+	unsigned int len_t;
 }levenshtein_args;
 /*==========================================================*/
 
 
 /*====================Functions headers=====================*/
-int parallel_levenshtein(void*, int, void*, int);
+int parallel_levenshtein(void*, unsigned int, void*, unsigned int);
 void* hlevenshtein(void*);
 void* vlevenshtein(void*);
-void swap(void**, int*, void**, int*);
+void swap(void**, unsigned int*, void**, unsigned int*);
 /*==========================================================*/
 
 
 /*====================Shared memory=========================*/
-unsigned int* md;	/*main diagonal distance*/
-unsigned int* sd;	/*secondary diagonal distance*/
+unsigned short int* md;	/*main diagonal distance*/
+unsigned short int* sd;	/*secondary diagonal distance*/
 pthread_mutex_t vmux; /*mutex*/
 pthread_mutex_t hmux; /*mutex*/
 
-unsigned int verticalReturn; /*return of vertical side*/
-unsigned int **hm; /*horizontal matrix*/
-unsigned int **vm; /*vertical matrix*/
+unsigned short int verticalReturn; /*return of vertical side*/
 /*==========================================================*/
 
 /*====================Assumptions===========================*/
@@ -68,14 +66,13 @@ unsigned int **vm; /*vertical matrix*/
 
 	Always len(s) <= len(t), otherwise make swap
 	len(diagonal(s, t)) = min(len(s), len(t) =>
-		len(diagonal(s, t) = len(s)
+		len(diagonal(s, t)) = len(s)
 
 	Levenshtein for horizontal side is priority
 */
 /*==========================================================*/
 
-
-int parallel_levenshtein(void* s, int len_s, void* t, int len_t)
+int parallel_levenshtein(void* s, unsigned int len_s, void* t, unsigned int len_t)
 {
 	pthread_t vthread;
 	pthread_t hthread;
@@ -83,9 +80,7 @@ int parallel_levenshtein(void* s, int len_s, void* t, int len_t)
 	levenshtein_args harg;
 
 	int sizeSD;
-	int sizeVM;
-	int i, k;
-	int result;
+	unsigned short int distance; /*return value*/
 
 	/*initalization horizontal semaphore*/
 	pthread_mutex_init(&vmux, NULL);
@@ -102,9 +97,9 @@ int parallel_levenshtein(void* s, int len_s, void* t, int len_t)
 	sizeSD = (len_s == len_t ? len_s : len_s + 1);
 
 	/*allocate main diagonal*/
-	md = (unsigned int*) malloc (sizeof(unsigned int) * (len_s + 1));
+	md = (unsigned short int*) malloc (sizeof(unsigned short int) * (len_s + 1));
 	/*allocate secondary diagonal*/
-	sd = (unsigned int*) malloc (sizeof(unsigned int) * (sizeSD));
+	sd = (unsigned short int*) malloc (sizeof(unsigned short int) * (sizeSD));
 
 	/*initialization of diagonals distance*/
 	md[0] = 0; sd[0] = 1;
@@ -123,47 +118,34 @@ int parallel_levenshtein(void* s, int len_s, void* t, int len_t)
 	pthread_join(vthread, NULL);
 
 	if(len_t == len_s)
-		result = md[len_s];
+		distance = md[len_s];
 	else if((len_s + 1) < len_t)
-		result = verticalReturn;
+		distance = verticalReturn;
 	else
-		result = sd[len_s];
+		distance = sd[len_s];
 
-	/* free horizontal distance matrix */
-    for (i = 0; i < len_s; i++)
-        free(hm[i]);
-    free(hm);
-
-    /* free vertical distance matrix*/
-    sizeVM = (len_s + 1 < len_t ? len_s + 1 : len_t - 1);
-    for (i = 0, k = len_t - 1; i < (sizeVM); i++, k--)
-         free(vm[i]);
-    free(vm);
-
-	/* free main diagonal*/
+	/*free memory*/
 	free(md);
-	/* free secondary diagonal*/
 	free(sd);
 
-
-	return result;
+	return distance;
 }
 
 
 void* hlevenshtein(void* arg)
 {
-
+	unsigned short int **hm;
 	levenshtein_args* la = (levenshtein_args*) arg;
 	char* s = la->s;
-	int len_s = la->len_s;
+	unsigned int len_s = la->len_s;
 	char* t = la->t;
 
-	int i, j, k;
+	unsigned int i, j, k;
 
 	/*alocate horizontal distance matrix*/
-	hm = (unsigned int**) malloc (sizeof(unsigned int*) * len_s);
+	hm = (unsigned short int**) malloc (sizeof(unsigned short int*) * len_s);
 	for (i = 0; i < len_s; i++)
-			hm[i] = (unsigned int*) malloc (sizeof(unsigned int) * (len_s - i));
+			hm[i] = (unsigned short int*) malloc (sizeof(unsigned short int) * (len_s - i));
 
 	/*initialization of horizontal distance matrix*/
 	for(j = 0; j < len_s; j++)
@@ -228,28 +210,33 @@ void* hlevenshtein(void* arg)
 	pthread_mutex_unlock(&hmux);
 	/*==================================================================================*/
 
+	/*free memory*/
+	for (i = 0; i < len_s; i++)
+		free(hm[i]);
+	free(hm);
+
 	return 0;
 }
 
 
 void* vlevenshtein(void* arg)
 {
-
+	unsigned short int **vm;
 	levenshtein_args* la = (levenshtein_args*) arg;
 	char* s = la->s;
-	int len_s = la->len_s;
+	unsigned int len_s = la->len_s;
 	char* t = la->t;
-	int len_t = la->len_t;
+	unsigned int len_t = la->len_t;
 
-	int i, j, k;
+	unsigned int i, j, k;
 
-	int sizeVM = (len_s + 1 < len_t ? len_s + 1 : len_t - 1);
+	unsigned int sizeVM = (len_s + 1 < len_t ? len_s + 1 : len_t - 1);
 
 
 	/*alocate vertical distance matrix*/
-	vm = (unsigned int**) malloc (sizeof(unsigned int*) * (sizeVM));
+	vm = (unsigned short int**) malloc (sizeof(unsigned short int*) * (sizeVM));
 	for (i = 0, k = len_t - 1; i < (sizeVM); i++, k--)
-			vm[i] = (unsigned int*) malloc (sizeof(unsigned int) * k);
+			vm[i] = (unsigned short int*) malloc (sizeof(unsigned short int) * k);
 
 	/*initialization of vertical distance matrix*/
 	for(k = 0; k < (len_t - 1); k++)
@@ -322,11 +309,16 @@ void* vlevenshtein(void* arg)
 		verticalReturn = vm[sizeVM - 1][0];
 	}
 
+	/*free memory*/
+	for (i = 0; i < (sizeVM); i++)
+		free(vm[i]);
+	free(vm);
+
 	return 0;
 }
 
 
-void swap(void** s, int* len_s, void** t, int* len_t)
+void swap(void** s, unsigned int* len_s, void** t, unsigned int* len_t)
 {
 	void* aux;
 	unsigned int len_aux;
@@ -340,5 +332,4 @@ void swap(void** s, int* len_s, void** t, int* len_t)
 	*s = aux;
 	*len_s = len_aux;
 }
-
 

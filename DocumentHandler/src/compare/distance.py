@@ -3,44 +3,43 @@ Created on Apr 30, 2014
 
 @author: ygor
 """
-# import numpy
-from pprint import pprint
+import ctypes
 
+class Levenshtein(object):
 
-DELETION_COST = 1
-INSERTION_COST = 1
-SUBSTITUITION_COST = 1
+    def __init__(self):
+        # Load the library
+        liblevenshtein = ctypes.CDLL('liblevenshtein.so')
 
+        # Define function arguments types
+        liblevenshtein.parallel_levenshtein.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_void_p, ctypes.c_int]
+        liblevenshtein.sequential_levenshtein.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_int]
+        # Define function return type.
+        liblevenshtein.parallel_levenshtein.restype = ctypes.c_int
+        liblevenshtein.sequential_levenshtein.restype = ctypes.c_int
 
-def levensthein(s, t):
+    def _get_ctype_args(self, list_s, list_t):
+        #  Get the lenth
+        s_len = len(list_s)
+        t_len = len(list_t)
 
-    #size n
-    n = len(s)
+        # Convert the values to typec
+        s_c = (ctypes.c_char_p * s_len)(*list_s)
+        t_c = (ctypes.c_char_p * t_len)(*list_t)
 
-    #size m
-    m = len(t)
+        # Get the length in typec
+        s_len_c = ctypes.c_int(s_len)
+        t_len_c = ctypes.c_int(t_len)
 
-    #d[n][m]
-#     d = numpy.zeros((n+1)*(m+1)).reshape((n+1, m+1))
-#     d.astype(int)
-    
-    d = [[0 for i in range(m+1)] for j in range(n+1)]
+        return s_c, s_len_c, t_c, t_len_c
 
-    #0..n
-    for i in range(0, n+1):
-        d[i][0] = i
+    def parallel_alignment(self, list_s, list_t):
+        s_c, s_len_c, t_c, t_len_c = self._get_ctype_args(list_s, list_t)
+        # Call function
+        return self.liblevenshtein.parallel_levenshtein(s_c, s_len_c, t_c, t_len_c)
 
-    #0..m
-    for j in range(0, m+1):
-        d[0][j] = j
+    def sequential_alignment(self, list_s, list_t):
+        s_c, s_len_c, t_c, t_len_c = self._get_ctype_args(list_s, list_t)
 
-    #1..n
-    for i in range(1, n+1):
-        #1..m
-        for j in range(1, m+1):
-            if s[i-1] == t[j-1]:
-                d[i][j] = min(d[i-1][j] + DELETION_COST, d[i][j-1] + INSERTION_COST, d[i-1][j-1])
-            else:
-                d[i][j] = min(d[i-1][j] + DELETION_COST, d[i][j-1] + INSERTION_COST, d[i-1][j-1] + SUBSTITUITION_COST)
-
-    return d[n][m] #return d[n][m]
+        # Call function
+        return self.liblevenshtein.sequential_levenshtein(s_c, s_len_c, t_c, t_len_c)
