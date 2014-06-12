@@ -1,0 +1,48 @@
+[3;J[H[2J./pv1 -s "`cat 1.test`" -t "`cat 2.test`"
+The levesthein distance: 13573
+
+Total time spent: 4.60779000 (s)
+./pv2 -s "`cat 1.test`" -t "`cat 2.test`"
+
+The levesthein distance: 13573
+Total time spent: 4.36111600 (s)
+./pv3 -s "`cat 1.test`" -t "`cat 2.test`"
+
+The levesthein distance: 13573
+Total time spent: 1.84750800 (s)
+./s -s "`cat 1.test`" -t "`cat 2.test`"
+
+The levesthein distance: 13573
+Total time spent: 2.11937500 (s)
+./pv1 -s "`cat 1.test`" -t "`cat 1.test`"
+The levesthein distance: 0
+
+Total time spent: 10.13687300 (s)
+./pv2 -s "`cat 1.test`" -t "`cat 1.test`"
+
+The levesthein distance: 0
+Total time spent: 8.64603000 (s)
+./pv3 -s "`cat 1.test`" -t "`cat 1.test`"
+
+The levesthein distance: 0
+Total time spent: 2.99375800 (s)
+./s -s "`cat 1.test`" -t "`cat 1.test`"
+
+The levesthein distance: 0
+Total time spent: 5.15004100 (s)
+./pv1 -s "`cat 2.test`" -t "`cat 2.test`"
+The levesthein distance: 0
+
+Total time spent: 0.83777700 (s)
+./pv2 -s "`cat 2.test`" -t "`cat 2.test`"
+
+The levesthein distance: 0
+Total time spent: 1.20518000 (s)
+./pv3 -s "`cat 2.test`" -t "`cat 2.test`"
+
+The levesthein distance: 0
+Total time spent: 0.73198500 (s)
+./s -s "`cat 2.test`" -t "`cat 2.test`"
+
+The levesthein distance: 0
+Total time spent: 0.85880700 (s)
