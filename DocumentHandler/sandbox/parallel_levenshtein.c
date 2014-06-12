@@ -38,18 +38,18 @@ dL'essentiel est invisible pour les yeux
 typedef struct
 {
 	void* s;
-	unsigned int len_s;
+	int len_s;
 	void* t;
-	unsigned int len_t;
+	int len_t;
 }levenshtein_args;
 /*==========================================================*/
 
 
 /*====================Functions headers=====================*/
-int levenshtein(void*, unsigned int, void*, unsigned int);
+int levenshtein(void*, int, void*, int);
 void* hlevenshtein(void*);
 void* vlevenshtein(void*);
-void swap(void**, unsigned int*, void**, unsigned int*);
+void swap(void**, int*, void**, int*);
 /*==========================================================*/
 
 
@@ -133,7 +133,7 @@ int main(int argc, char** argv)
 }
 
 
-int levenshtein(void* s, unsigned int len_s, void* t, unsigned int len_t)
+int levenshtein(void* s, int len_s, void* t, int len_t)
 {
 	pthread_t vthread;
 	pthread_t hthread;
@@ -198,10 +198,10 @@ void* hlevenshtein(void* arg)
 	unsigned short int **hm;
 	levenshtein_args* la = (levenshtein_args*) arg;
 	char* s = la->s;
-	unsigned int len_s = la->len_s;
+	int len_s = la->len_s;
 	char* t = la->t;
 
-	unsigned int i, j, k;
+	int i, j, k;
 
 	/*alocate horizontal distance matrix*/
 	hm = (unsigned short int**) malloc (sizeof(unsigned short int*) * len_s);
@@ -285,13 +285,13 @@ void* vlevenshtein(void* arg)
 	unsigned short int **vm;
 	levenshtein_args* la = (levenshtein_args*) arg;
 	char* s = la->s;
-	unsigned int len_s = la->len_s;
+	int len_s = la->len_s;
 	char* t = la->t;
-	unsigned int len_t = la->len_t;
+	int len_t = la->len_t;
 
-	unsigned int i, j, k;
+	int i, j, k;
 
-	unsigned int sizeVM = (len_s + 1 < len_t ? len_s + 1 : len_t - 1);
+	int sizeVM = (len_s + 1 < len_t ? len_s + 1 : len_t - 1);
 
 
 	/*alocate vertical distance matrix*/

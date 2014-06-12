@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 
 unsigned short int levenshtein(char* s, int len_s, char* t, int len_t)
 {
-	unsigned int i, j;
+	int i, j;
 	unsigned short int** d; //[len_s + 1][len_t + 1];
 	unsigned short int distance;
 
