@@ -5,7 +5,7 @@ Departamento de Tecnologia e Linguagens.
 Curso de Ciência da Computaćão.
 
 Autores: Alexsander Andrade de Melo e Ygor de Mello Canalli.
-Data (última atualização): 25/05/2014
+Data (última atualização): 16/06/2014
 
 dL'essentiel est invisible pour les yeux
 */
@@ -379,7 +379,7 @@ void* vlevenshtein(void* arg)
 }
 
 
-void swap(void** s, int* len_s, void** t, int* len_t)
+void swap(void** s, unsigned int* len_s, void** t, unsigned int* len_t)
 {
 	void* aux;
 	unsigned int len_aux;
