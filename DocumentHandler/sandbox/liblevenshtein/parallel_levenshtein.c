@@ -159,6 +159,10 @@ void* vlevenshtein(void* arg)
 	unsigned int i, j, k;
 
 	unsigned int sizeVM = (len_s + 1 < len_t ? len_s + 1 : len_t - 1);
+	
+	/*Wrong*/
+	if(sizeVM == 0)
+		return 0;
 
 
 	/*alocate vertical distance matrix*/
