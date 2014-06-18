@@ -5,7 +5,8 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
 
 from model import *
-
+import model.container
+import model.content
 from util import *
 
 def document_dump(input_file_name, output_file_name):

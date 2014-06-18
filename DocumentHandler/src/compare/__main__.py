@@ -8,6 +8,8 @@ from distance import Levenshtein
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
 
 from model import *
+import model.container
+import model.content
 from time import time
 
 
