@@ -3,7 +3,7 @@ import getopt
 
 import os
 
-from distanceWithPyCast import Levenshtein
+from distance import Levenshtein
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
 
