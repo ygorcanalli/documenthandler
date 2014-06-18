@@ -5,9 +5,10 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
 
 from model import *
-import model.container
-import model.content
+from model.container import *
+from model.content import *
 from util import *
+
 
 def document_dump(input_file_name, output_file_name):
     input_file = open(input_file_name, "r")
@@ -28,12 +29,14 @@ def document_backup(input_file_name, output_file_name):
     output_file.write(str(document))
     output_file.close()
 
+
 def document_from_pkl(input_file_name):
     input_file = open(input_file_name, "rb")
     document = pickle.load(input_file)
     input_file.close()
 
     return document
+
 
 def database_dump(database_name):
     plain_directory_name = database_name + "/plain/"
