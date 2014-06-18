@@ -4,13 +4,9 @@ import getopt
 import os
 
 from distance import Levenshtein
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'model'))
 
 from model import *
-import model.container
-import model.content
 from time import time
 
 
@@ -63,21 +59,12 @@ def __main__(argv):
 
             s_words = s_paragraphsi.get_words()
             t_words = t_paragraphsi.get_words()
-            # Call function
-            print len(s_paragraphsi), len(t_paragraphsi) 
 
+            # Call function
             parallel_result = str(levenshtein.parallel_alignment(s_words.to_hash_list(), t_words.to_hash_list()))
 
             #  results accumulation
             output_string += '[' + str(i) + '][' + str(j) + ']=' + parallel_result + '\n'
-
-	    for word in s_words:
-		output_string += str(word) + '\n'
-
-	    output_string += '\n\n'
-
-            for word in t_words:
-		output_string += str(word) + '\n'
 
     end_time = time()
     spent_time = (end_time - start_time)

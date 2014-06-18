@@ -1,14 +1,13 @@
-import pickle
 import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'model'))
 
 from model import *
 from model.container import *
 from model.content import *
 from util import *
+import pickle
 
 
 def document_dump(input_file_name, output_file_name):
