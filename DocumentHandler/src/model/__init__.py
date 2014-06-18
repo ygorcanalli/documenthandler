@@ -1,10 +1,10 @@
-from content import *
-from container import *
 import pickle
 import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
+
+from model import *
 
 from util import *
 
