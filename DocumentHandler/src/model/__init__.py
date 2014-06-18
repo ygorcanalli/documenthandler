@@ -1,6 +1,12 @@
 from content import *
 from container import *
 import pickle
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
+
+from util import *
 
 def document_dump(input_file_name, output_file_name):
     input_file = open(input_file_name, "r")
@@ -27,3 +33,9 @@ def document_from_pkl(input_file_name):
     input_file.close()
 
     return document
+
+def database_dump(database_name):
+    plain_directory_name = database_name + "/plain/"
+    pickled_directory_name = database_name + "/pickled/"
+    for file in list_dir(plain_directory_name, "*.txt"):
+        document_dump(plain_directory_name + file, pickled_directory_name + file[:-3] + "pkl")
