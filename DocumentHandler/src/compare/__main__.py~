@@ -82,7 +82,7 @@ def compare_database(database_name):
 	    simil = similarity(s_len, t_len, distance)
 
             # results accumulation
-            output_string += '[' + file_names.__getitem__(i) + '][' + file_names.__getitem__(j) + ']=' + "%0.4f" % simil + '\n'
+            output_string += '[' + file_names.__getitem__(i) + '][' + file_names.__getitem__(j) + ']=' + str(simil) + '\n'
     
     end_time = time()
     spent_time = (end_time - start_time)
@@ -127,7 +127,7 @@ def compare_pair(s_file, t_file):
             simil = similarity(s_len, t_len, distance)
 
             #  results accumulation
-            output_string += '[' + str(i) + '][' + str(j) + ']=' + "%0.4f" % simil + '\n'
+            output_string += '[' + str(i) + '][' + str(j) + ']=' + str(simil) + '\n'
 
     end_time = time()
     spent_time = (end_time - start_time)

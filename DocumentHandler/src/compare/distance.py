@@ -20,3 +20,10 @@ class Levenshtein(object):
 
         # Call function
         return liblevenshtein.sequential_levenshtein(list_s, s_len, list_t, t_len)
+
+def dissimilarity(s_len, t_len, distance):
+    return float(distance)/max(s_len, t_len)
+
+def similarity(s_len, t_len, distance):
+    return 1 - dissimilarity(s_len, t_len, distance)
+
