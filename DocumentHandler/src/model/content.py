@@ -4,6 +4,7 @@ Created on Apr 17, 2014
 @author: ygor
 """
 import abc
+import re
 from container import List
 
 
@@ -20,7 +21,7 @@ class Content(object):
     _words = {}
     _chars = {}
 
-    _separator = None
+    _regex = None
 
     @classmethod
     def create_document(cls, original_string):
@@ -69,12 +70,12 @@ class Content(object):
 
     def __init__(self, original_string):
         self.elements = Content_part() 
-        splited = original_string.split(self._separator)
+        splited = re.split(self._regex, original_string)
         for splitedi in splited:
             if splitedi != "":
                 self.elements.add(self._init_part(splitedi))
 
-    # initialize an instance of the type of the part of the current content type
+    # Initialize an instance of the type of the part of the current content type
     @abc.abstractmethod
     def _init_part(self, original_string):
         return None
@@ -82,10 +83,10 @@ class Content(object):
     def __str__(self):
         result = ""
         
-        # iterate over elements, exept the last
+        # Iterate over elements, exept the last
         for i in range(0, len(self.elements.list)-1):
-            result += str(self.elements.list[i]) + self._separator
-        # cocatenate with the last element
+            result += str(self.elements.list[i]) + self._regex
+        # Cocatenate with the last element
         result += str(self.elements.list[len(self.elements.list)-1])
         return result
     
@@ -127,8 +128,11 @@ class Content(object):
 
     def __hash__(self):
         return hash(self.__key())
-        
-        
+
+    def __len__(self):
+        return len(self.elements)
+
+
         
 class Content_part(object):
     """
@@ -140,18 +144,22 @@ class Content_part(object):
         """
         self.list = List()
         
-#     add an element to the list 
+    # Add an element to the list 
     def add(self, elem):
         self.list.append(elem)
     
     def add_all(self, elements):
         for elementsi in elements:
             self.list.append(elementsi)
-        
+
+    def __len__(self):
+        return len(self.list)
+     
         
 class Document (Content):
-    
-    _separator = "\n\n"
+
+    # One new line and a sequence of blank characters (new line, tab, space)
+    _regex = "\n\s*"
 
     def _init_part(self, original_string):
         return Content.create_paragraph(original_string)
@@ -171,8 +179,9 @@ class Document (Content):
               
         
 class Paragraph (Content):
-    
-    _separator = ". "
+
+    # One dot and a sequence of new line spaces    
+    _regex = "\.\s*"
     
     def _init_part(self, original_string):
         return Content.create_sentence(original_string)
@@ -190,10 +199,12 @@ class Paragraph (Content):
     
     def get_chars(self):
         return  super(Paragraph, self).get_chars()
+
                
 class Sentence (Content):
     
-    _separator = " "
+    # A sequence of new line spaces 
+    _regex = "\s*"
      
     def _init_part(self, original_string):
         return Content.create_word(original_string)
@@ -214,15 +225,16 @@ class Sentence (Content):
             
 class Word (Content):
     
-    _separator = ""
+    # Split on each character
+    _regex = ""
 
-    # noinspection PyMissingConstructor
     def __init__(self, original_string):
 
         self.elements = Content_part()
         splited = original_string
         for splitedi in splited:
-            if splitedi != "":
+	    # Trim commas
+            if splitedi != "" and splitedi != ",":
                 self.elements.add(self._init_part(splitedi))
     
     def _init_part(self, original_string):
@@ -245,7 +257,6 @@ class Word (Content):
             
 class Char (Content):
 
-    # noinspection PyMissingConstructor
     def __init__(self, original_string):
         self.elements = Content_part()
         if original_string != "":

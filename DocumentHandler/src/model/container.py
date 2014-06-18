@@ -17,6 +17,12 @@ class List(list):
     
     def to_list(self):
         return self
+
+    def to_hash_list(self):
+        hash_list = List()
+        for listi in self:
+            hash_list.append(listi.__hash__())
+        return hash_list
     
     def __str__(self):
         return "List(" + super(List, self).__str__() + ")"
