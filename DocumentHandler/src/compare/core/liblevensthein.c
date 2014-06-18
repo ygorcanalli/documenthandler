@@ -71,6 +71,9 @@ static PyObject* liblevenshtein_sequential_levensthein(PyObject *self, PyObject 
 	/*calling function*/
     distance = sequential_levenshtein(s, len_s, t, len_t);
 
+    free(s);
+    free(t);
+
 	/*return in Python type*/
     return Py_BuildValue("H", distance);
 }
