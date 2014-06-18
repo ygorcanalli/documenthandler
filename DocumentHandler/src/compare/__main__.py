@@ -6,6 +6,7 @@ import os
 from distance import Levenshtein
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'model'))
 
 from model import *
 import model.container
