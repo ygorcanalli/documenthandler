@@ -19,6 +19,7 @@ dL'essentiel est invisible pour les yeux
 #include <semaphore.h>
 #include <sys/types.h>
 #include <papi.h>
+#include <sched.h>
 #include "in.h"
 
 /*====================Macros================================*/
@@ -49,6 +50,7 @@ typedef struct
 int levenshtein(void*, unsigned int, void*, unsigned int);
 void* hlevenshtein(void*);
 void* vlevenshtein(void*);
+void defineCPUAffinity(unsigned int*, unsigned int);
 void swap(void**, unsigned int*, void**, unsigned int*);
 /*==========================================================*/
 
@@ -61,6 +63,15 @@ pthread_mutex_t hmux; /*mutex*/
 
 unsigned short int verticalReturn; /*return of vertical side*/
 /*==========================================================*/
+
+
+/*===========General Constants==============================*/
+unsigned int hcpu_list[] = {0};
+unsigned int vcpu_list[] = {1};
+unsigned int hcpu_list_size = 1;
+unsigned int vcpu_list_size = 1;
+/*==========================================================*/
+
 
 /*====================Assumptions===========================*/
 /*
@@ -195,6 +206,8 @@ int levenshtein(void* s, unsigned int len_s, void* t, unsigned int len_t)
 
 void* hlevenshtein(void* arg)
 {
+	defineCPUAffinity(hcpu_list, hcpu_list_size);
+
 	unsigned short int **hm;
 	levenshtein_args* la = (levenshtein_args*) arg;
 	char* s = la->s;
@@ -282,6 +295,8 @@ void* hlevenshtein(void* arg)
 
 void* vlevenshtein(void* arg)
 {
+	defineCPUAffinity(vcpu_list, vcpu_list_size);
+
 	unsigned short int **vm;
 	levenshtein_args* la = (levenshtein_args*) arg;
 	char* s = la->s;
@@ -380,6 +395,28 @@ void* vlevenshtein(void* arg)
 	free(vm);
 
 	return 0;
+}
+
+
+void defineCPUAffinity(unsigned int* cpu_list, unsigned int size)
+{
+	cpu_set_t cpuset;
+	CPU_ZERO(&cpuset);       //clears the cpuset
+
+	short int i = 0;
+
+	for(i = 0; i < size; i++)
+		CPU_SET(cpu_list[i], &cpuset);   //set CPU 'cpu_list[i]' on cpuset
+
+	/*
+	* cpu affinity for the calling thread 
+	* first parameter is the pid, 0 = calling thread
+	* second parameter is the size of your cpuset
+	* third param is the cpuset in which your thread will be
+	* placed. Each bit represents a CPU
+	*/
+	sched_setaffinity(0, sizeof(cpuset), &cpuset);
+	//pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset);
 }
 
 

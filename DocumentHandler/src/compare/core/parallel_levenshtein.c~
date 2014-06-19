@@ -265,7 +265,7 @@ void defineCPUAffinity(unsigned int* cpu_list, unsigned int size)
 	cpu_set_t cpuset;
 	CPU_ZERO(&cpuset);       //clears the cpuset
 
-	short int i = 0;
+	int i = 0;
 
 	for(i = 0; i < size; i++)
 		CPU_SET(cpu_list[i], &cpuset);   //set CPU 'cpu_list[i]' on cpuset
