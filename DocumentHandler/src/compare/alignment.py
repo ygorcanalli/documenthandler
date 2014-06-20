@@ -18,14 +18,14 @@ def align_words(s_content, t_content, alignment_function):
 
     return similarity(s_len, t_len, distance)
 
-def align_plain_text(s_content, t_content, alignment_function):
-    s_plain_text = s_content.__str__()
-    t_plain_text = t_content.__str__()
+def align_chars(s_content, t_content, alignment_function):
+    s_chars = s_content.get_chars()
+    t_chars = t_content.get_chars()
 
-    s_len = len(s_plain_text)
-    t_len = len(t_plain_text)
+    s_len = len(s_chars)
+    t_len = len(t_chars)
 
     # Call function
-    distance = alignment_function(s_plain_text.to_hash_list(), t_plain_text.to_hash_list())
+    distance = alignment_function(s_chars.to_hash_list(), t_chars.to_hash_list())
 
     return similarity(s_len, t_len, distance)
