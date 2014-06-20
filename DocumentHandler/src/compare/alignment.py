@@ -17,3 +17,15 @@ def align_words(s_content, t_content, alignment_function):
     distance = alignment_function(s_words.to_hash_list(), t_words.to_hash_list())
 
     return similarity(s_len, t_len, distance)
+
+def align_plain_text(s_content, t_content, alignment_function):
+    s_plain_text = s_content.__str__()
+    t_plain_text = t_content.__str__()
+
+    s_len = len(s_plain_text)
+    t_len = len(t_plain_text)
+
+    # Call function
+    distance = alignment_function(s_plain_text.to_hash_list(), t_plain_text.to_hash_list())
+
+    return similarity(s_len, t_len, distance)
