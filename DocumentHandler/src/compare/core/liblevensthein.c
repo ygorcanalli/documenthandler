@@ -1,11 +1,11 @@
-	#include <Python.h>
-	#include "sequential_levenshtein.h"
-	#include "parallel_levenshtein.h"
+#include <Python.h>
+#include "sequential_levenshtein.h"
+#include "parallel_levenshtein.h"
 
-	long* convertPySequenceToCArray(PyObject*, unsigned int);
+long* convertPySequenceToCArray(PyObject*, unsigned int);
 
-	static PyObject* liblevenshtein_parallel_levensthein(PyObject *self, PyObject *args)
-	{
+static PyObject* liblevenshtein_parallel_levensthein(PyObject *self, PyObject *args)
+{
 	PyObject* seq_s;
 	PyObject* seq_t;
 
@@ -39,10 +39,10 @@
 
 	/*return in Python type*/
 	return Py_BuildValue("H", distance);
-	}
+}
 
-	static PyObject* liblevenshtein_sequential_levensthein(PyObject *self, PyObject *args)
-	{
+static PyObject* liblevenshtein_sequential_levensthein(PyObject *self, PyObject *args)
+{
 	PyObject* seq_s;
 	PyObject* seq_t;
 
@@ -76,27 +76,28 @@
 
 	/*return in Python type*/
 	return Py_BuildValue("H", distance);
-	}
+}
 
 
-	static PyMethodDef LiblevenshteinMethods[] = {
+static PyMethodDef LiblevenshteinMethods[] = {
 	{"parallel_levenshtein", liblevenshtein_parallel_levensthein, METH_VARARGS, "Description.."},
 	{"sequential_levenshtein", liblevenshtein_sequential_levensthein, METH_VARARGS, "Description.."},
 	{NULL,NULL,0,NULL}
-	};
+};
 
 
-	PyMODINIT_FUNC initliblevenshtein(void)
-	{
+PyMODINIT_FUNC initliblevenshtein(void)
+{
 	PyObject *m;
 	m = Py_InitModule("liblevenshtein", LiblevenshteinMethods);
+	
 	if (m == NULL)
-	return;
-	}
+		return;
+}
 
 
-	long* convertPySequenceToCArray(PyObject* seq_x, unsigned int len_x)
-	{
+long* convertPySequenceToCArray(PyObject* seq_x, unsigned int len_x)
+{
 	int i;
 	long* x;
 
@@ -105,41 +106,41 @@
 	if(x == NULL)
 	{
 		printf("\nUnable to allocate memory");
-	Py_DECREF(seq_x);
+		Py_DECREF(seq_x);
 		return NULL;
-	//return PyErr_NoMemory();
+		//return PyErr_NoMemory();
 	}
 
 	for(i = 0; i < len_x; i++)
 	{
-	PyObject *fitem;
-	PyObject *item = PySequence_Fast_GET_ITEM(seq_x, i);
+		PyObject *fitem;
+		PyObject *item = PySequence_Fast_GET_ITEM(seq_x, i);
 
-	if(item == NULL)
+		if(item == NULL)
 		{
 			printf("\nCould not get item in the sequence");
-	    Py_DECREF(seq_x);
-	    free(x);
-	    return NULL;
-	}
+			Py_DECREF(seq_x);
+			free(x);
+			return NULL;
+		}
 
-		/*Instead PyNumber_Long is deprecate?*/
-	fitem = PyNumber_Long(item);
+			/*Instead PyNumber_Long is deprecate?*/
+		fitem = PyNumber_Long(item);
 
-	if(fitem == NULL)
+		if(fitem == NULL)
 		{
 			printf("\nall items must be integers numbers");
-	    Py_DECREF(seq_x);
-	    free(x);
-	    PyErr_SetString(PyExc_TypeError, "all items must be integers numbers");
-	    return NULL;
-	}
+			Py_DECREF(seq_x);
+			free(x);
+			PyErr_SetString(PyExc_TypeError, "all items must be integers numbers");
+			return NULL;
+		}
 
-	x[i] = PyLong_AsLong(fitem);
-	Py_DECREF(fitem);
+		x[i] = PyLong_AsLong(fitem);
+		Py_DECREF(fitem);
 	}    
 
 	Py_DECREF(seq_x);
 
 	return x;
-	}
+}

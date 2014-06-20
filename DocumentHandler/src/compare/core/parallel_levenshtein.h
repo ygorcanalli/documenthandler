@@ -45,7 +45,7 @@ typedef struct
 
 
 /*====================Functions headers=====================*/
-int parallel_levenshtein(long*, unsigned int, long*, unsigned int);
+unsigned short int parallel_levenshtein(long*, unsigned int, long*, unsigned int);
 void* hlevenshtein(void*);
 void* vlevenshtein(void*);
 void defineCPUAffinity(unsigned int*, unsigned int);

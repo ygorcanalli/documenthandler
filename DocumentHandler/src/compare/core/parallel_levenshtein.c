@@ -8,7 +8,7 @@ unsigned int vcpu_list_size = 1;
 /*==========================================================*/
 
 
-int parallel_levenshtein(long* s, unsigned int len_s, long* t, unsigned int len_t)
+unsigned short int parallel_levenshtein(long* s, unsigned int len_s, long* t, unsigned int len_t)
 {
 	pthread_t vthread;
 	pthread_t hthread;
