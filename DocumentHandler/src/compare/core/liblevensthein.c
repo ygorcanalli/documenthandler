@@ -1,11 +1,11 @@
-#include <Python.h>
-#include "sequential_levenshtein.h"
-#include "parallel_levenshtein.h"
+	#include <Python.h>
+	#include "sequential_levenshtein.h"
+	#include "parallel_levenshtein.h"
 
-long* convertPySequenceToCArray(PyObject*, unsigned int);
+	long* convertPySequenceToCArray(PyObject*, unsigned int);
 
-static PyObject* liblevenshtein_parallel_levensthein(PyObject *self, PyObject *args)
-{
+	static PyObject* liblevenshtein_parallel_levensthein(PyObject *self, PyObject *args)
+	{
 	PyObject* seq_s;
 	PyObject* seq_t;
 
@@ -39,10 +39,10 @@ static PyObject* liblevenshtein_parallel_levensthein(PyObject *self, PyObject *a
 
 	/*return in Python type*/
 	return Py_BuildValue("H", distance);
-}
+	}
 
-static PyObject* liblevenshtein_sequential_levensthein(PyObject *self, PyObject *args)
-{
+	static PyObject* liblevenshtein_sequential_levensthein(PyObject *self, PyObject *args)
+	{
 	PyObject* seq_s;
 	PyObject* seq_t;
 
@@ -76,27 +76,27 @@ static PyObject* liblevenshtein_sequential_levensthein(PyObject *self, PyObject 
 
 	/*return in Python type*/
 	return Py_BuildValue("H", distance);
-}
+	}
 
 
-static PyMethodDef LiblevenshteinMethods[] = {
+	static PyMethodDef LiblevenshteinMethods[] = {
 	{"parallel_levenshtein", liblevenshtein_parallel_levensthein, METH_VARARGS, "Description.."},
 	{"sequential_levenshtein", liblevenshtein_sequential_levensthein, METH_VARARGS, "Description.."},
 	{NULL,NULL,0,NULL}
-};
+	};
 
 
-PyMODINIT_FUNC initliblevenshtein(void)
-{
+	PyMODINIT_FUNC initliblevenshtein(void)
+	{
 	PyObject *m;
 	m = Py_InitModule("liblevenshtein", LiblevenshteinMethods);
 	if (m == NULL)
 	return;
-}
+	}
 
 
-long* convertPySequenceToCArray(PyObject* seq_x, unsigned int len_x)
-{
+	long* convertPySequenceToCArray(PyObject* seq_x, unsigned int len_x)
+	{
 	int i;
 	long* x;
 
@@ -142,4 +142,4 @@ long* convertPySequenceToCArray(PyObject* seq_x, unsigned int len_x)
 	Py_DECREF(seq_x);
 
 	return x;
-}
+	}
