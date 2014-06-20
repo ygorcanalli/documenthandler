@@ -7,6 +7,9 @@ from util import *
 
 from mpi4py import MPI
 from time import time
+from compare.distance import *
+from compare.alignment import *
+import model
 
 # MPI initializations
 comm   = MPI.COMM_WORLD            # MPI communicator
@@ -69,7 +72,12 @@ def run_master(database_name, n_workers):
 def run_worker(database_name):
 
     workload = comm.recv(source=0, tag=WORKLOAD)
-    print "Worker#" + str(rank) + ": " + str(workload) + "\n"
+    for s_file_name, t_file_name in workload:
+        s_document = model.document_from_pkl(database_name + "/pickled/" + s_file_name)
+        t_document = model.document_from_pkl(database_name + "/pickled/" + t_file_name)
+
+        simil = align_words(s_document, t_document, parallel_levenshtein)
+        print "Worker#" + str(rank) + ": " + "[" + s_file_name[:-4] + "]" + "[" + t_file_name[:-4] + "]=" + "%0.4f" % simil
 
 
 # Read arguments from command line
@@ -78,11 +86,11 @@ def __main__(argv):
     try:
         opts, args = getopt.getopt(argv, "D:o:w:", ["database=", "ofile="])
     except getopt.GetoptError:
-        print 'model -d <database_path> -o <outputfile>'
+        print 'model -D <database_path> -o <outputfile>'
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'model -d <database_path> -o <outputfile>'
+            print 'model -D <database_path> -o <outputfile>'
             sys.exit()
         elif opt in ("-D", "--database"):
             database_name = arg

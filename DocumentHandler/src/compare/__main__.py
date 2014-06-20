@@ -63,23 +63,21 @@ def compare_database(database_name):
     header_string = 'Distances in database' + database_name + ':\n'
     output_string = ''
 
-    levenshtein = Levenshtein()
-
     start_time = time()
 
     for i in range(0, len(documents)):
         for j in range(i+1, len(documents)):
             # Get the words
-	    s_words = documents.__getitem__(i).get_words()
-	    t_words = documents.__getitem__(j).get_words()
+            s_words = documents.__getitem__(i).get_words()
+            t_words = documents.__getitem__(j).get_words()
 
             s_len = len(s_words)
             t_len = len(t_words)
 
             # Call function
-            distance = str(levenshtein.parallel_alignment(s_words.to_hash_list(), t_words.to_hash_list()))
+            distance = str(parallel_levenshtein(s_words.to_hash_list(), t_words.to_hash_list()))
 
-	    simil = similarity(s_len, t_len, distance)
+            simil = similarity(s_len, t_len, distance)
 
             # results accumulation
             output_string += '[' + file_names.__getitem__(i) + '][' + file_names.__getitem__(j) + ']=' + "%0.4f" % simil + '\n'
@@ -105,8 +103,6 @@ def compare_pair(s_file, t_file):
     header_string = 'Distance(' + s_file + ', ' + t_file + '):\n'
     output_string = ''
 
-    levenshtein = Levenshtein()
-
     start_time = time()
 
     for i in range(0, len(s_paragraphs)):
@@ -122,7 +118,7 @@ def compare_pair(s_file, t_file):
             t_len = len(t_words)
 
             # Call function
-            distance = str(levenshtein.parallel_alignment(s_words.to_hash_list(), t_words.to_hash_list()))
+            distance = str(parallel_levenshtein(s_words.to_hash_list(), t_words.to_hash_list()))
 
             simil = similarity(s_len, t_len, distance)
 

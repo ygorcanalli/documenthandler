@@ -5,21 +5,19 @@ Created on Apr 30, 2014
 """
 from core import liblevenshtein
 
-class Levenshtein(object):
+def parallel_levenshtein(list_s, list_t):
+    s_len = len(list_s)
+    t_len = len(list_t)
 
-    def parallel_alignment(self, list_s, list_t):
-        s_len = len(list_s)
-        t_len = len(list_t)
+    # Call function
+    return liblevenshtein.parallel_levenshtein(list_s, s_len, list_t, t_len)
 
-        # Call function
-        return liblevenshtein.parallel_levenshtein(list_s, s_len, list_t, t_len)
+def sequential_levenshtein(list_s, list_t):
+    s_len = len(list_s)
+    t_len = len(list_t)
 
-    def sequential_alignment(self, list_s, list_t):
-        s_len = len(list_s)
-        t_len = len(list_t)
-
-        # Call function
-        return liblevenshtein.sequential_levenshtein(list_s, s_len, list_t, t_len)
+    # Call function
+    return liblevenshtein.sequential_levenshtein(list_s, s_len, list_t, t_len)
 
 def dissimilarity(s_len, t_len, distance):
     return float(distance)/max(s_len, t_len)
