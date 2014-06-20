@@ -76,7 +76,7 @@ def run_worker(database_name):
         s_document = model.document_from_pkl(database_name + "/pickled/" + s_file_name)
         t_document = model.document_from_pkl(database_name + "/pickled/" + t_file_name)
 
-        simil = align_words(s_document, t_document, parallel_levenshtein)
+        simil = align_words(s_document, t_document, sequential_levenshtein)
         print "Worker#" + str(rank) + ": " + "[" + s_file_name[:-4] + "]" + "[" + t_file_name[:-4] + "]=" + "%0.4f" % simil
 
 

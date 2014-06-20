@@ -22,6 +22,7 @@ class Content(object):
     _chars = {}
 
     _regex = None
+    _default_separator = None
 
     @classmethod
     def create_document(cls, original_string):
@@ -69,7 +70,7 @@ class Content(object):
         return my_char
 
     def __init__(self, original_string):
-        self.elements = Content_part() 
+        self.elements = Content_part()
         splited = re.split(self._regex, original_string)
         for splitedi in splited:
             if splitedi != "":
@@ -79,16 +80,6 @@ class Content(object):
     @abc.abstractmethod
     def _init_part(self, original_string):
         return None
-        
-    def __str__(self):
-        result = ""
-        
-        # Iterate over elements, exept the last
-        for i in range(0, len(self.elements.list)-1):
-            result += str(self.elements.list[i]) + self._regex
-        # Cocatenate with the last element
-        result += str(self.elements.list[len(self.elements.list)-1])
-        return result
     
     def get_paragraphs(self):
         result = List()
@@ -119,7 +110,17 @@ class Content(object):
             for charsi in listi.get_chars():
                 result.append(charsi)
         return result
-    
+
+    def __str__(self):
+        result = ""
+
+        # Iterate over elements, exept the last
+        for i in range(0, len(self.elements.list)-1):
+            result += str(self.elements.list[i]) + self._default_separator
+        # Cocatenate with the last element
+        result += str(self.elements.list[len(self.elements.list)-1])
+        return result
+
     def __key(self):
         return self.__str__()
 
@@ -160,6 +161,7 @@ class Document (Content):
 
     # One new line and a sequence of blank characters (new line, tab, space)
     _regex = "\n\s*"
+    _default_separator = "\n\n"
 
     def _init_part(self, original_string):
         return Content.create_paragraph(original_string)
@@ -182,6 +184,7 @@ class Paragraph (Content):
 
     # One dot and a sequence of new line spaces    
     _regex = "\.\s*"
+    _default_separator = ". "
     
     def _init_part(self, original_string):
         return Content.create_sentence(original_string)
@@ -205,6 +208,7 @@ class Sentence (Content):
     
     # A sequence of new line spaces 
     _regex = "\s*"
+    _default_separator = " "
      
     def _init_part(self, original_string):
         return Content.create_word(original_string)
@@ -227,6 +231,7 @@ class Word (Content):
     
     # Split on each character
     _regex = ""
+    _default_separator = ""
 
     def __init__(self, original_string):
 
