@@ -82,11 +82,11 @@ def run_master(database_name, n_workers):
         results_str += "[" + s_file_name[:-4] + "]" + "[" + t_file_name[:-4] + "]=" + "%0.4f" % results[(s_file_name, t_file_name)] + "\n"
     
     # Recive info from workers
-    info = ''
+    info = []
     for i in range(0, n_workers):
-        info += comm.recv(source=MPI.ANY_SOURCE, tag=INFO)
+        info.extend(comm.recv(source=MPI.ANY_SOURCE, tag=INFO))
 
-    info += "\n\n>>Wall time: %0.4f s\n" % spent_time
+    info.append("\n>>Wall time: %0.4f s\n" % spent_time)
 
     return info, results_str
 
@@ -117,20 +117,24 @@ def run_worker(database_name):
     end_time = time()
     spent_time = (end_time - start_time)
 
-    info = "\n---------------------------------------------------------------"
-    info += "\nHost name: " + name
-    info += "\nComparasion Technique used: Sequential Levenshtein"
-    info += "\nSpend time: %0.4f s\n" % spent_time
+    info = []
+    info.append("---------------------------------------------------------------")
+    info.append("Host name: " + name)
+    info.append("Comparasion Technique used: Sequential Levenshtein")
+    info.append("Spend time: %0.4f s\n" % spent_time)
 
     # Send info to master
     comm.send(info, 0, tag=INFO)
 
 
 def write_output_results(database_name, info, results):
+    #convert info from workers and master in string
+    info_str = '\n'.join(info)
+
     #merge util data    
     output_str = "Data base name: " + database_name
     output_str += "\nNumber of MPI process: %d" % size
-    output_str += "\n" + info
+    output_str += "\n" + info_str
     output_str += "\nResults: \n" + results
 
     output_file_path = database_name + "/results"
