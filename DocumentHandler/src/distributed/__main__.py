@@ -1,6 +1,8 @@
 import sys
 import os
 import getopt
+import datetime
+from time import strftime
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
 from util import *
@@ -15,10 +17,11 @@ import model
 comm   = MPI.COMM_WORLD            # MPI communicator
 size   = comm.Get_size()           # Total number of processes
 rank   = comm.Get_rank()           # Process rank
-#name   = MPI.Get_processor_name()  # Processor identifier
+name   = MPI.Get_processor_name()  # Processor identifier
 
 WORKLOAD = 0
 RESULTS = 1
+INFO = 2
 
 
 def split_workload(workload, n_workers):
@@ -54,6 +57,7 @@ def run_master(database_name, n_workers):
 
     pairs = []
     results = {}
+    results_str = ''
 
     # Create a non-repeating list of document pairs
     for i in range(0, len(file_names)):
@@ -71,16 +75,25 @@ def run_master(database_name, n_workers):
         worker_results = comm.recv(source=MPI.ANY_SOURCE, tag=RESULTS)
         results.update(worker_results)
 
-    for s_file_name, t_file_name in results:
-        print "[" + s_file_name[:-4] + "]" + "[" + t_file_name[:-4] + "]=" + "%0.4f" % results[(s_file_name, t_file_name)]
-
     end_time = time()
     spent_time = (end_time - start_time)
 
-    print "\nSpend time: %0.4f s\n" % spent_time
+    for s_file_name, t_file_name in results:
+        results_str += "[" + s_file_name[:-4] + "]" + "[" + t_file_name[:-4] + "]=" + "%0.4f" % results[(s_file_name, t_file_name)] + "\n"
+    
+    # Recive info from workers
+    info = ''
+    for i in range(0, n_workers):
+        info += comm.recv(source=MPI.ANY_SOURCE, tag=INFO)
+
+    info += "\n\n>>Wall time: %0.4f s\n" % spent_time
+
+    return info, results_str
 
 
 def run_worker(database_name):
+    start_time = time()
+
     documents = {}
     results = {}
 
@@ -88,23 +101,59 @@ def run_worker(database_name):
 
     # Load documents from pickle avoiding repeated documents
     for s_file_name, t_file_name in workload:
-        s_document = model.document_from_pkl(database_name + "/pickled/" + s_file_name)
-        t_document = model.document_from_pkl(database_name + "/pickled/" + t_file_name)
-
         if not s_file_name in documents:
             documents[s_file_name] = model.document_from_pkl(database_name + "/pickled/" + s_file_name)
 
         if not t_file_name in documents:
             documents[t_file_name] = model.document_from_pkl(database_name + "/pickled/" + t_file_name)
 
-    # Fill the result map with similaritys
-    for s_file_name, t_file_name in workload:
+        # Fill the result map with similaritys
         simil = align_words(documents[s_file_name], documents[t_file_name], sequential_levenshtein)
         results[(s_file_name, t_file_name)] = simil
 
     # Send result to master
     comm.send(results, 0, tag=RESULTS)
 
+    end_time = time()
+    spent_time = (end_time - start_time)
+
+    info = "\n---------------------------------------------------------------"
+    info += "\nHost name: " + name
+    info += "\nComparasion Technique used: Sequential Levenshtein"
+    info += "\nSpend time: %0.4f s\n" % spent_time
+
+    # Send info to master
+    comm.send(info, 0, tag=INFO)
+
+
+def write_output_results(database_name, info, results):
+    #merge util data    
+    output_str = "Data base name: " + database_name
+    output_str += "\nNumber of MPI process: %d" % size
+    output_str += "\n" + info
+    output_str += "\nResults: \n" + results
+
+    output_file_path = database_name + "/results"
+
+    if not os.path.exists(output_file_path):
+        os.mkdir(output_file_path)
+    
+    #get currents date and time
+    now = datetime.datetime.now()
+    day = now.strftime("%d")
+    month = now.strftime("%m")
+    hour = now.strftime("%H")
+    minute = now.strftime("%M")
+    second = now.strftime("%S")
+
+    output_file_name = "distributed_%d_%s_%s_%s_%s_%s" % (now.year, month, day, hour, minute, second)
+   
+    try:
+        output_file = open(output_file_path + "/" + output_file_name, "w")
+        output_file.write(output_str)
+        output_file.close()
+    except IOError: 
+        print "Error writing results"
 
 # Read arguments from command line
 def __main__(argv):
@@ -120,11 +169,12 @@ def __main__(argv):
             sys.exit()
         elif opt in ("-D", "--database"):
             database_name = arg
-        elif opt in ("-o", "--outputfile"):
-            output_file = arg 
+        #elif opt in ("-o", "--outputfile"):
+            #output_file = arg
 
     if rank == 0:
-        run_master(database_name, size - 1)
+        info, results = run_master(database_name, size - 1)
+        write_output_results(database_name, info, results)
     else:
         run_worker(database_name)
 
