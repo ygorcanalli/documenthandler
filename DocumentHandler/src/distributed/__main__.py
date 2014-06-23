@@ -144,13 +144,9 @@ def write_output_results(database_name, info, results):
     
     #get currents date and time
     now = datetime.datetime.now()
-    day = now.strftime("%d")
-    month = now.strftime("%m")
-    hour = now.strftime("%H")
-    minute = now.strftime("%M")
-    second = now.strftime("%S")
+    formated_time = now.strftime("%Y_%m_%d_%H_%M_%S")
 
-    output_file_name = "distributed_%d_%s_%s_%s_%s_%s" % (now.year, month, day, hour, minute, second)
+    output_file_name = "distributed_" + formated_time
    
     try:
         output_file = open(output_file_path + "/" + output_file_name, "w")
