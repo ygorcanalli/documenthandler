@@ -1,4 +1,4 @@
-#mpiexec [mpirun] -wdir [#current working directory] -np [# process] -hostfile [hostfile]  python distributed -D base_name
+#mpiexec [mpirun] -wdir <current_working_directory> -np #process -hostfile <hostfile>  python distributed -D <base_name>
 
 #Example:
 #Current Directory: DocumentHandler in Home
