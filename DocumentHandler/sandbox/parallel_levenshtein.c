@@ -66,10 +66,10 @@ unsigned short int verticalReturn; /*return of vertical side*/
 
 
 /*===========General Constants==============================*/
-const unsigned int hcpu_list[] = {0};
-const unsigned int vcpu_list[] = {1};
-const unsigned int hcpu_list_size = 1;
-const unsigned int vcpu_list_size = 1;
+unsigned int hcpu_list[] = {0};
+unsigned int vcpu_list[] = {1};
+unsigned int hcpu_list_size = 1;
+unsigned int vcpu_list_size = 1;
 /*==========================================================*/
 
 
