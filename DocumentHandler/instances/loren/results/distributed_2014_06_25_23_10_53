@@ -1,14 +1,42 @@
-Data base name: /home/keokolo/Estudos Acadêmicos/UFRRJ - Ciência da Computação/TCC - Ygor/documenthandler/DocumentHandler/instances/loren
-Number of MPI process: 4
+Data base name: ../instances/loren
+Number of MPI process: 8
 ---------------------------------------------------------------
 Host name: qwui2-PC
 Comparasion Technique used: Sequential Levenshtein
-Spend time: 2.0514 s
+Spend time: 2.6177 s
 
 ---------------------------------------------------------------
 Host name: qwui-PC
 Comparasion Technique used: Sequential Levenshtein
-Spend time: 2.1822 s
+Spend time: 2.5491 s
+
+---------------------------------------------------------------
+Host name: qwui2-PC
+Comparasion Technique used: Sequential Levenshtein
+Spend time: 1.3703 s
+
+---------------------------------------------------------------
+Host name: qwui-PC
+Comparasion Technique used: Sequential Levenshtein
+Spend time: 2.0227 s
+
+---------------------------------------------------------------
+Host name: qwui2-PC
+Comparasion Technique used: Sequential Levenshtein
+Spend time: 2.0823 s
+
+---------------------------------------------------------------
+Host name: qwui-PC
+Comparasion Technique used: Sequential Levenshtein
+Spend time: 1.5625 s
+
+---------------------------------------------------------------
+Host name: qwui-PC
+Comparasion Technique used: Sequential Levenshtein
+Spend time: 2.7295 s
+
+
+>>Wall time: 2.7393 s
 
 Results: 
 [07][01]=0.0804
@@ -40,7 +68,6 @@ Results:
 [06][10]=0.0847
 [03][07]=0.0866
 [03][08]=0.0788
-[05][01]=0.0449
 [10][01]=0.0667
 [07][08]=0.0786
 [10][09]=0.0752
@@ -53,14 +80,7 @@ Results:
 [04][01]=0.0565
 [08][01]=0.0710
 [04][09]=0.0894
+[05][01]=0.0449
 [06][02]=0.0371
 [05][10]=0.0845
 [05][02]=0.0392
-
-Wall time: 3.7083 s
-
----------------------------------------------------------------
-Host name: qwui-PC
-Comparasion Technique used: Sequential Levenshtein
-Spend time: 3.7053 s
-

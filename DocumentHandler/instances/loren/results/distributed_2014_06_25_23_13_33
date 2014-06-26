@@ -1,19 +1,22 @@
-Data base name: /home/keokolo/Estudos Acadêmicos/UFRRJ - Ciência da Computação/TCC - Ygor/documenthandler/DocumentHandler/instances/loren
+Data base name: ../instances/loren
 Number of MPI process: 4
 ---------------------------------------------------------------
 Host name: qwui2-PC
 Comparasion Technique used: Sequential Levenshtein
-Spend time: 3.8384 s
+Spend time: 1.7882 s
 
 ---------------------------------------------------------------
-Host name: qwui2-PC
+Host name: qwui-PC
 Comparasion Technique used: Sequential Levenshtein
-Spend time: 3.9470 s
+Spend time: 2.0978 s
 
 ---------------------------------------------------------------
-Host name: qwui2-PC
+Host name: qwui-PC
 Comparasion Technique used: Sequential Levenshtein
-Spend time: 5.3333 s
+Spend time: 3.5930 s
+
+
+>>Wall time: 3.5872 s
 
 Results: 
 [07][01]=0.0804
@@ -61,5 +64,3 @@ Results:
 [06][02]=0.0371
 [05][10]=0.0845
 [05][02]=0.0392
-
-Wall time: 5.3338 s
