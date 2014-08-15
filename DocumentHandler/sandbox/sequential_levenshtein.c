@@ -120,6 +120,8 @@ unsigned short int levenshtein(char* s, int len_s, char* t, int len_t)
 	for (i = 0; i < len_s + 1; i++)
 		free(d[i]);
 
+    free(d);
+
 	return distance;
 }
 
