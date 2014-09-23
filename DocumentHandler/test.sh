@@ -32,9 +32,7 @@ DATASET["big", "big"]="instances/big_loren"
 #MPI_PATH="/opt/intel/impi_latest/bin64/mpirun -r ssh"
 MPI_PATH="/usr/bin/mpiexec"
 HOST_FILE="src/distributed/hosts"
-NUMBER_OF_PROCCESSES=17
-PARALLEL_NUMBER_OF_PROCCESSES=9
-
+NUMBER_OF_PROCCESSES="4 8 16"
 
 standard_deviation(){
 
@@ -98,139 +96,51 @@ run_test(){
 	echo -e "Average:  $AVG"
 	echo -e "Standard deviation: $STD"
 
-	#--------------Paragraph by words--------------
-	SUM=0
-	for((i = 0; i < $N; i++))
-	do	
-		DATE=`date`
-		echo -e "[$DATE [i=$i] /usr/bin/python src/distributed/no_distributed.py --alignment_mode=paragraph_by_words --alignment_function=sequential_levenshtein -D $CURRENT_DATASET/" >> $LOG_FILE_NAME
 
-		TIME=`/usr/bin/python src/distributed/no_distributed.py --alignment_mode=paragraph_by_words --alignment_function=sequential_levenshtein -D $CURRENT_DATASET/`
-		TIMES[i]=$TIME
-		SUM=$(/usr/bin/awk "BEGIN{print $SUM+$TIME}") 
+	for NP in $NUMBER_OF_PROCCESSES; do
+		echo -e "=-=-=-=-=-=-=-=-Distributed ($NP)-=-=-=-=-=-=-=-="
+		#--------------Word--------------
+		SUM=0
+		for((i = 0; i < $N; i++))
+		do	
+			DATE=`date`
+			echo -e "[$DATE [i=$i] $MPI_PATH -hostfile $HOST_FILE -wdir src -np $NP python distributed/ --alignment_mode=word --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/" >> $LOG_FILE_NAME
+
+			TIME=`$MPI_PATH -hostfile $HOST_FILE -wdir src -np $NP python distributed/ --alignment_mode=word --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/`
+			TIMES[i]=$TIME
+			SUM=$(/usr/bin/awk "BEGIN{print $SUM+$TIME}") 
+		done
+
+		AVG=$(/usr/bin/awk "BEGIN{print $SUM/$N}")
+		STD=$(standard_deviation $TIMES $AVG $N)
+		echo -e "--------------------Words--------------------"
+		echo -e "Average:  $AVG"
+		echo -e "Standard deviation: $STD"
+		
+		
+		echo -e "=-=-=-=-=-=-=-=-Distributed With Parallel ($NP)-=-=-=-=-=-=-=-="
+		#--------------Word--------------
+		SUM=0
+		for((i = 0; i < $N; i++))
+		do	
+			DATE=`date`
+			echo -e "[$DATE [i=$i] $MPI_PATH -hostfile $HOST_FILE -wdir src -np $NP python distributed/ --alignment_mode=word --alignment_function=parallel_levenshtein -D ../$CURRENT_DATASET/" >> $LOG_FILE_NAME
+
+			TIME=`$MPI_PATH -hostfile $HOST_FILE -wdir src -np $NP python distributed/ --alignment_mode=word --alignment_function=parallel_levenshtein -D ../$CURRENT_DATASET/`
+			TIMES[i]=$TIME
+			SUM=$(/usr/bin/awk "BEGIN{print $SUM+$TIME}") 
+		done
+
+		AVG=$(/usr/bin/awk "BEGIN{print $SUM/$N}")
+		STD=$(standard_deviation $TIMES $AVG $N)
+		echo -e "--------------------Words--------------------"
+		echo -e "Average:  $AVG"
+		echo -e "Standard deviation: $STD"	
 	done
 
-	AVG=$(/usr/bin/awk "BEGIN{print $SUM/$N}")
-	STD=$(standard_deviation $TIMES $AVG $N)
-	echo -e "--------------Paragraph by words--------------"
-	echo -e "Average:  $AVG"
-	echo -e "Standard deviation: $STD"
+	
 
 
-	echo -e "=-=-=-=-=-=-=-=-Distributed ($NUMBER_OF_PROCCESSES)-=-=-=-=-=-=-=-="
-	#--------------Word--------------
-	SUM=0
-	for((i = 0; i < $N; i++))
-	do	
-		DATE=`date`
-		echo -e "[$DATE [i=$i] $MPI_PATH -hostfile $HOST_FILE -wdir src -np $NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=word --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/" >> $LOG_FILE_NAME
-
-		TIME=`$MPI_PATH -hostfile $HOST_FILE -wdir src -np $NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=word --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/`
-		TIMES[i]=$TIME
-		SUM=$(/usr/bin/awk "BEGIN{print $SUM+$TIME}") 
-	done
-
-	AVG=$(/usr/bin/awk "BEGIN{print $SUM/$N}")
-	STD=$(standard_deviation $TIMES $AVG $N)
-	echo -e "--------------------Words--------------------"
-	echo -e "Average:  $AVG"
-	echo -e "Standard deviation: $STD"
-
-	#--------------Paragraph by words--------------
-	SUM=0
-	for((i = 0; i < $N; i++))
-	do	
-		DATE=`date`
-		echo -e "[$DATE [i=$i] $MPI_PATH -hostfile $HOST_FILE -wdir src -np $NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=paragraph_by_words --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/" >> $LOG_FILE_NAME
-
-		TIME=`$MPI_PATH -hostfile $HOST_FILE -wdir src -np $NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=paragraph_by_words --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/`
-		TIMES[i]=$TIME
-		SUM=$(/usr/bin/awk "BEGIN{print $SUM+$TIME}") 
-	done
-
-	AVG=$(/usr/bin/awk "BEGIN{print $SUM/$N}")
-	STD=$(standard_deviation $TIMES $AVG $N)
-	echo -e "--------------Paragraph by words--------------"
-	echo -e "Average:  $AVG"
-	echo -e "Standard deviation: $STD"
-
-
-
-	echo -e "=-=-=-=-=-=-=-=-Distributed ($PARALLEL_NUMBER_OF_PROCCESSES)-=-=-=-=-=-=-=-="
-	#--------------Word--------------
-	SUM=0
-	for((i = 0; i < $N; i++))
-	do	
-		DATE=`date`
-		echo -e "[$DATE [i=$i] $MPI_PATH -hostfile $HOST_FILE -wdir src -np $PARALLEL_NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=word --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/" >> $LOG_FILE_NAME
-
-		TIME=`$MPI_PATH -hostfile $HOST_FILE -wdir src -np $PARALLEL_NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=word --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/`
-		TIMES[i]=$TIME
-		SUM=$(/usr/bin/awk "BEGIN{print $SUM+$TIME}") 
-	done
-
-	AVG=$(/usr/bin/awk "BEGIN{print $SUM/$N}")
-	STD=$(standard_deviation $TIMES $AVG $N)
-	echo -e "--------------------Words--------------------"
-	echo -e "Average:  $AVG"
-	echo -e "Standard deviation: $STD"
-
-	#--------------Paragraph by words--------------
-	SUM=0
-	for((i = 0; i < $N; i++))
-	do	
-		DATE=`date`
-		echo -e "[$DATE [i=$i] $MPI_PATH -hostfile $HOST_FILE -wdir src -np $PARALLEL_NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=paragraph_by_words --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/" >> $LOG_FILE_NAME
-
-
-		TIME=`$MPI_PATH -hostfile $HOST_FILE -wdir src -np $PARALLEL_NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=paragraph_by_words --alignment_function=sequential_levenshtein -D ../$CURRENT_DATASET/`
-		TIMES[i]=$TIME
-		SUM=$(/usr/bin/awk "BEGIN{print $SUM+$TIME}") 
-	done
-
-	AVG=$(/usr/bin/awk "BEGIN{print $SUM/$N}")
-	STD=$(standard_deviation $TIMES $AVG $N)
-	echo -e "--------------Paragraph by words--------------"
-	echo -e "Average:  $AVG"
-	echo -e "Standard deviation: $STD"
-
-
-	echo -e "=-=-=-=-=-=-=-=-Distributed with parallel ($PARALLEL_NUMBER_OF_PROCCESSES)-=-=-=-=-=-=-=-="
-	#--------------Word--------------
-	SUM=0
-	for((i = 0; i < $N; i++))
-	do	
-		DATE=`date`
-		echo -e "[$DATE [i=$i] $MPI_PATH -hostfile $HOST_FILE -wdir src -np $PARALLEL_NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=word --alignment_function=parallel_levenshtein -D ../$CURRENT_DATASET/" >> $LOG_FILE_NAME
-
-		TIME=`$MPI_PATH -hostfile $HOST_FILE -wdir src -np $PARALLEL_NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=word --alignment_function=parallel_levenshtein -D ../$CURRENT_DATASET/`
-		TIMES[i]=$TIME
-		SUM=$(/usr/bin/awk "BEGIN{print $SUM+$TIME}") 
-	done
-
-	AVG=$(/usr/bin/awk "BEGIN{print $SUM/$N}")
-	STD=$(standard_deviation $TIMES $AVG $N)
-	echo -e "--------------------Words--------------------"
-	echo -e "Average:  $AVG"
-	echo -e "Standard deviation: $STD"
-
-	#--------------Paragraph by words--------------
-	SUM=0
-	for((i = 0; i < $N; i++))
-	do	
-		DATE=`date`
-		echo -e "[$DATE [i=$i] $MPI_PATH -hostfile $HOST_FILE -wdir src -np $PARALLEL_NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=paragraph_by_words --alignment_function=parallel_levenshtein -D ../$CURRENT_DATASET/" >> $LOG_FILE_NAME
-
-		TIME=`$MPI_PATH -hostfile $HOST_FILE -wdir src -np $PARALLEL_NUMBER_OF_PROCCESSES python distributed/ --alignment_mode=paragraph_by_words --alignment_function=parallel_levenshtein -D ../$CURRENT_DATASET/`
-		TIMES[i]=$TIME
-		SUM=$(/usr/bin/awk "BEGIN{print $SUM+$TIME}") 
-	done
-
-	AVG=$(/usr/bin/awk "BEGIN{print $SUM/$N}")
-	STD=$(standard_deviation $TIMES $AVG $N)
-	echo -e "--------------Paragraph by words--------------"
-	echo -e "Average:  $AVG"
-	echo -e "Standard deviation: $STD"
 }
 
 
