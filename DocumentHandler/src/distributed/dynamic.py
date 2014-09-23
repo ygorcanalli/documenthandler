@@ -119,6 +119,8 @@ def run_dynamic_workloaded_master(database_name, n_workers):
     end_time = time()
     spent_time = (end_time - start_time)
 
+    print spent_time
+
     for s_file_name, t_file_name in results:
         results_str += "[" + s_file_name[:-4] + "]" + "[" + t_file_name[:-4] + "]=" + "%0.4f" % results[(s_file_name, t_file_name)] + "\n"
     

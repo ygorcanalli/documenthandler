@@ -81,6 +81,7 @@ unsigned short int parallel_levenshtein(long* s, unsigned int len_s, long* t, un
 	/*define threads args*/
 	varg.s = harg.s = s;
 	varg.len_s = harg.len_s = len_s;
+	varg.equality_map = harg.equality_map = equality_map;
 	varg.t = harg.t = t;
 	varg.len_t = harg.len_t = len_t;
 
@@ -108,7 +109,7 @@ unsigned short int parallel_levenshtein(long* s, unsigned int len_s, long* t, un
 
 void* hlevenshtein(void* arg)
 {
-	defineCPUAffinity(hcpu_list, hcpu_list_size);
+	//defineCPUAffinity(hcpu_list, hcpu_list_size);
 
 	unsigned short int **hm;
 	levenshtein_args* la = (levenshtein_args*) arg;
@@ -119,6 +120,7 @@ void* hlevenshtein(void* arg)
 
 	unsigned int i, j, k;
 
+
 	/*alocate horizontal distance matrix*/
 	hm = (unsigned short int**) malloc (sizeof(unsigned short int*) * len_s);
 	for (i = 0; i < len_s; i++)
@@ -127,6 +129,7 @@ void* hlevenshtein(void* arg)
 	/*initialization of horizontal distance matrix*/
 	for(j = 0; j < len_s; j++)
 		hm[0][j] = j + 1;
+
 
 	for (i = 1;  i < (len_s); i++)
 	{
@@ -144,7 +147,7 @@ void* hlevenshtein(void* arg)
 
 
 		/*increase horizontal sempahore*/
-		pthread_mutex_unlock(&hmux);
+		pthread_mutex_unlock(&hmux);	
 	
 		/*computing levenshtein distante for imediate after main diagonal*/
 		j++;
@@ -168,6 +171,7 @@ void* hlevenshtein(void* arg)
 				hm[i][k] = MIN3(hm[i-1][k+1] + DEL_COST, hm[i][k-1] + INS_COST, hm[i-1][k] + EXC_COST);
 		}
 	}
+
 
 	/*===========Computation last element of main diagonal==============================*/
 	/*decrease vertical semaphore*/
@@ -198,7 +202,7 @@ void* hlevenshtein(void* arg)
 
 void* vlevenshtein(void* arg)
 {
-	defineCPUAffinity(vcpu_list, vcpu_list_size);
+	//defineCPUAffinity(vcpu_list, vcpu_list_size);
 
 	unsigned short int **vm;
 	levenshtein_args* la = (levenshtein_args*) arg;
@@ -302,9 +306,9 @@ void* vlevenshtein(void* arg)
 
 byte equals(TriangularMatrixMap* equality_map, long a, long b)
 {
-	if (equality_map == NULL)
+	if (equality_map == NULL)		
 		return (a == b);
-	
+
 	return triangularMatrixMapGet(equality_map, a, b);
 }
 

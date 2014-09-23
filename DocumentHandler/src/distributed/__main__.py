@@ -27,10 +27,12 @@ OK = 3
 CHAR_ALIGNMENT_MODE = "Char"
 WORD_ALIGNMENT_MODE = "Word"
 PARAGRAPH_BY_WORDS_ALIGNMENT_MODE = "Paragraph by words"
-TRESHOLD = 0.04
+
+TRESHOLD = 0.8
 
 
 def split_workload(workload, n_workers):
+
     splited_workload = []
 
     len_workload = len(workload)
@@ -88,23 +90,19 @@ def run_static_workloaded_master(database_name, n_workers):
     pairs = create_non_repeating_list_of_pairs(file_names)
     splited_workload = split_workload(pairs, n_workers)
 
-    #print "Master: division of workload: %0.4f" % (time() - start_time)
-
     # Send workload to workers
     for i in range(0, n_workers):
         comm.send(splited_workload.__getitem__(i), dest = i + 1, tag=WORKLOAD)
-
-    #print "Master: send workload: %0.4f" % (time() - start_time)
 
     # Receive results and merge the result map
     for i in range(0, n_workers):
         worker_results = comm.recv(source=MPI.ANY_SOURCE, tag=RESULTS)
         results.update(worker_results)
 
-    #print "Master: receive results: %0.4f" % (time() - start_time)
-
     end_time = time()
     spent_time = (end_time - start_time)
+
+    print spent_time
 
     for s_file_name, t_file_name in results:
         results_str += "[" + s_file_name[:-4] + "]" + "[" + t_file_name[:-4] + "]=" + "%0.4f" % results[(s_file_name, t_file_name)] + "\n"
@@ -115,12 +113,11 @@ def run_static_workloaded_master(database_name, n_workers):
         info.extend(comm.recv(source=MPI.ANY_SOURCE, tag=INFO))
 
     info.append("\n>>Wall time: %0.4f s\n" % spent_time)
-    #print "\n>>Wall time: %0.4f s\n" % spent_time
 
     return info, results_str
 
 
-def run_static_workloaded_worker(database_name, alignment_mode):
+def run_static_workloaded_worker(database_name, alignment_mode, alignment_function):
     start_time = time()
 
     documents = {}
@@ -131,14 +128,8 @@ def run_static_workloaded_worker(database_name, alignment_mode):
 
     workload = comm.recv(source=0, tag=WORKLOAD)
 
-    #print "Worker[%d] receive workload %0.4f" % (rank, time() - start_time)
-
-    print "Worker[%d] workload len: %d" % (rank, len(workload))
-
     # Load documents from pickle avoiding repeated documents
     for s_file_name, t_file_name in workload:
-        ##################################################
-        #start_read_documents = time()
 
         if not s_file_name in documents:
             documents[s_file_name] = model.document_from_pkl(database_name + "/pickled/" + s_file_name)
@@ -146,30 +137,14 @@ def run_static_workloaded_worker(database_name, alignment_mode):
         if not t_file_name in documents:
             documents[t_file_name] = model.document_from_pkl(database_name + "/pickled/" + t_file_name)
 
-        #################################################
-        #total_read_time = total_read_time + (time() - start_read_documents)
-
-        #print "Worker[%d] load documents pair [%s, %s] %0.4f" % (rank, s_file_name, t_file_name, time() - start_time)
-
-        #################################################
-        #start_alignment_time = time()
 
         # Fill the result map with similaritys
-        simil = run_alignment(alignment_mode, documents[s_file_name], documents[t_file_name], sequential_levenshtein)
-
-        #print "Alignment[%s, %s]\ttime: %.04f" % (s_file_name, t_file_name, time() - start_alignment_time)
-
-        #################################################
-        #total_alignment_time = total_alignment_time + (time() - start_alignment_time)
-
-        #print " > Worker[%d] finished run alignment[%s, %s] %0.4f" % (rank, s_file_name, t_file_name, time() - start_time)
+        simil = run_alignment(alignment_mode, documents[s_file_name], documents[t_file_name], alignment_function)
 
         results[(s_file_name, t_file_name)] = simil
 
     # Send result to master
     comm.send(results, 0, tag=RESULTS)
-
-    #print " >>> Worker[%d] send results to master %0.4f" % (rank, time() - start_time)
 
     end_time = time()
     spent_time = (end_time - start_time)
@@ -178,14 +153,11 @@ def run_static_workloaded_worker(database_name, alignment_mode):
     info.append("---------------------------------------------------------------")
     info.append("Host name: %s rank: %d" % (name, rank))
     info.append("Alignment mode: " + alignment_mode)
-    info.append("Comparasion Technique used: Sequential Levenshtein")
+    info.append("Comparasion Technique used: " + alignment_function.__name__)
     info.append("Spend time: %0.4f s\n" % spent_time)
 
     # Send info to master
     comm.send(info, 0, tag=INFO)
-
-    #print "\nWorker[%d] Time to read document %0.4f" % (rank, total_read_time)
-    #print "\nWorker[%d] Time to computing alignment documents %0.4f" % (rank, total_alignment_time)
 
 
 def write_output_results(database_name, info, results):
@@ -220,9 +192,10 @@ def write_output_results(database_name, info, results):
 def __main__(argv):
 
     alignment_mode = PARAGRAPH_BY_WORDS_ALIGNMENT_MODE
+    alignment_function = sequential_levenshtein
 
     try:
-        opts, args = getopt.getopt(argv, "D:m:", ["database=","alignment_mode="])
+        opts, args = getopt.getopt(argv, "D:m:f:", ["database=","alignment_mode=", "alignment_function="])
     except getopt.GetoptError:
         print 'no_distributed -D <database_path>'
         sys.exit(2)
@@ -237,15 +210,20 @@ def __main__(argv):
             if arg == "word":
                 alignment_mode = WORD_ALIGNMENT_MODE
             elif arg == "char":
-                alignment_mode == CHAR_ALIGNMENT_MODE
+                alignment_mode = CHAR_ALIGNMENT_MODE
             elif arg == "paragraph_by_words":
                 alignment_mode = PARAGRAPH_BY_WORDS_ALIGNMENT_MODE
+        elif opt in ("-f", "--alignment_function"):
+            if arg == "sequential_levenshtein":
+                alignment_function = sequential_levenshtein
+            elif arg == "parallel_levenshtein":
+                alignment_function = parallel_levenshtein
 
     if rank == 0:
         info, results = run_static_workloaded_master(database_name, size - 1)
         write_output_results(database_name, info, results)
     else:
-        run_static_workloaded_worker(database_name, alignment_mode)
+        run_static_workloaded_worker(database_name, alignment_mode, alignment_function)
 
 
 if __name__ == "__main__":

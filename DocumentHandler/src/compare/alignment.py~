@@ -31,7 +31,8 @@ def align_chars(s_content, t_content, alignment_function):
 
     return similarity(s_len, t_len, distance)
 
-def align_paragraphs_by_words(s_content, t_content, treshold, alignment_function):
+
+def align_paragraph_by_words(s_content, t_content, treshold, alignment_function):
 
     # Get the paragraphs
     s_paragraphs = s_content.get_paragraphs()
@@ -47,6 +48,7 @@ def align_paragraphs_by_words(s_content, t_content, treshold, alignment_function
 
     for s_paragraphsi in s_paragraphs_set:
         for t_paragraphsi in t_paragraphs_set:
+
             # Align the words of paragraphs
             simil = align_words(s_paragraphsi, t_paragraphsi, alignment_function)
 
@@ -59,9 +61,6 @@ def align_paragraphs_by_words(s_content, t_content, treshold, alignment_function
             #  results accumulation
             paragraphs_equality[(s_paragraphsi.__hash__(),t_paragraphsi.__hash__())] = equality
 
-    distance = alignment_function(s_paragraphs.to_hash_list(), t_paragraphs.to_hash_list(), paragraphs_equality, s_paragraphs_set.to_hash_list(), t_paragraphs_set.to_hash_list())
+    distance = alignment_function(s_paragraphs.to_hash_list(), t_paragraphs.to_hash_list(), equality_dict=paragraphs_equality, set_s=s_paragraphs_set.to_hash_list(), set_t=t_paragraphs_set.to_hash_list())
 
     return similarity(s_len, t_len, distance)
-
-     
-

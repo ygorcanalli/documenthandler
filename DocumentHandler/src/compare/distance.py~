@@ -5,6 +5,8 @@ Created on Apr 30, 2014
 """
 from core import liblevenshtein
 
+
+'''
 def parallel_levenshtein(list_s, list_t, equality_dict, set_s, set_t):
     s_len = len(list_s)
     t_len = len(list_t)
@@ -16,6 +18,53 @@ def parallel_levenshtein(list_s, list_t, equality_dict, set_s, set_t):
     return liblevenshtein.parallel_levenshtein(list_s, s_len, list_t, t_len, equality_dict, set_s, s_set_len, set_t, t_set_len)
 
 
+def parallel_levenshtein(list_s, list_t):
+    s_len = len(list_s)
+    t_len = len(list_t)
+
+    # Call function
+    return liblevenshtein.parallel_levenshtein(list_s, s_len, list_t, t_len)
+'''
+
+def parallel_levenshtein(list_s, list_t, *args, **kwargs):
+    s_len = len(list_s)
+    t_len = len(list_t)
+	
+    equality_dict = kwargs.get('equality_dict', None);
+    set_s = kwargs.get('set_s', None);
+    set_t = kwargs.get('set_t', None);
+
+    # Call function
+    if(equality_dict != None):
+        s_set_len = len(set_s)
+        t_set_len = len(set_t)
+
+        return liblevenshtein.parallel_levenshtein(list_s, s_len, list_t, t_len, equality_dict, set_s, s_set_len, set_t, t_set_len)	
+
+    print 'oi'
+
+    return liblevenshtein.parallel_levenshtein(list_s, s_len, list_t, t_len)
+
+
+def sequential_levenshtein(list_s, list_t, *args, **kwargs):
+    s_len = len(list_s)
+    t_len = len(list_t)
+	
+    equality_dict = kwargs.get('equality_dict', None);
+    set_s = kwargs.get('set_s', None);
+    set_t = kwargs.get('set_t', None);
+
+    # Call function
+    if(equality_dict != None):
+        s_set_len = len(set_s)
+        t_set_len = len(set_t)
+
+        return liblevenshtein.sequential_levenshtein(list_s, s_len, list_t, t_len, equality_dict, set_s, s_set_len, set_t, t_set_len)	
+
+    return liblevenshtein.sequential_levenshtein(list_s, s_len, list_t, t_len)
+
+
+'''
 def sequential_levenshtein(list_s, list_t, equality_dict, set_s, set_t):
     s_len = len(list_s)
     t_len = len(list_t)
@@ -26,8 +75,20 @@ def sequential_levenshtein(list_s, list_t, equality_dict, set_s, set_t):
     # Call function
     return liblevenshtein.sequential_levenshtein(list_s, s_len, list_t, t_len, equality_dict, set_s, s_set_len, set_t, t_set_len)
 
+
+
+def sequential_levenshtein(list_s, list_t):
+    s_len = len(list_s)
+    t_len = len(list_t)
+
+    # Call function
+    return liblevenshtein.sequential_levenshtein(list_s, s_len, list_t, t_len)
+'''
+
+
 def dissimilarity(s_len, t_len, distance):
     return float(distance)/max(s_len, t_len)
+
 
 def similarity(s_len, t_len, distance):
     return 1 - dissimilarity(s_len, t_len, distance)

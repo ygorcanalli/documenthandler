@@ -2,4 +2,4 @@
 
 #Example:
 #Current Directory: DocumentHandler in Home
-#mpiexec -wdir src -np 8 -hostfile src/distributed/hosts  python distributed -D ../instances/loren
+#mpiexec -wdir src -np 8 -hostfile src/distributed/hosts python distributed -D ../instances/loren

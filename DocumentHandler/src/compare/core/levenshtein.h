@@ -11,7 +11,6 @@ dL'essentiel est invisible pour les yeux
 */
 
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>

@@ -68,6 +68,7 @@ unsigned short triangularMatrixMapGet(TriangularMatrixMap* equality_map, long s_
 	int i = search(equality_map->s_keys, equality_map->s_len, s_key);
 	int j = search(equality_map->t_keys, equality_map->t_len, t_key);
 
+
 	// confere if needs to swap parameters
 	if (i <= j)
 		return equality_map->values[i][j];

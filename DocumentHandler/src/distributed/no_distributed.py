@@ -37,7 +37,7 @@ def run_alignment(alignment_mode, s_document, t_document, alignment_function):
     return simil
 
 
-def run_basic_compare(database_name, alignment_mode):
+def run_basic_compare(database_name, alignment_mode, alignment_function):
     start_time = time()
 
     # List files in database
@@ -54,15 +54,8 @@ def run_basic_compare(database_name, alignment_mode):
 
     pairs = create_non_repeating_list_of_pairs(file_names)
 
-    #print "Create lis of pairs: %0.4f" % (time() - start_time)
-
-    #print "Workload len: %d" % (len(pairs))
-
     # Load documents from pickle avoiding repeated documents
     for s_file_name, t_file_name in pairs:
-
-        ##################################################
-        #start_read_documents = time()
 
         if not s_file_name in documents:
             documents[s_file_name] = model.document_from_pkl(database_name + "/pickled/" + s_file_name)
@@ -70,29 +63,17 @@ def run_basic_compare(database_name, alignment_mode):
         if not t_file_name in documents:
             documents[t_file_name] = model.document_from_pkl(database_name + "/pickled/" + t_file_name)
 
-        #################################################
-        #total_read_time = total_read_time + (time() - start_read_documents)
-
-
-        #print "Load documents pair [%s, %s] %0.4f" % (s_file_name, t_file_name, time() - start_time)
-
-        #################################################
         start_alignment_time = time()
 
         # Fill the result map with similaritys
-        simil = run_alignment(alignment_mode, documents[s_file_name], documents[t_file_name], sequential_levenshtein)
+        simil = run_alignment(alignment_mode, documents[s_file_name], documents[t_file_name], alignment_function)
 
-        #print "Alignment[%s, %s] \ttime: %.04f" % (s_file_name, t_file_name, time() - start_alignment_time)
-
-        #################################################
-        #total_alignment_time = total_alignment_time + (time() - start_alignment_time)
-
-        #print "Finished run alignment[%s, %s] %0.4f" % (s_file_name, t_file_name, time() - start_time)
-	
         results[(s_file_name, t_file_name)] = simil
 
     end_time = time()
     spent_time = (end_time - start_time)
+
+    print spent_time
 
     for s_file_name, t_file_name in results:
         results_str += "[" + s_file_name[:-4] + "]" + "[" + t_file_name[:-4] + "]=" + "%0.4f" % results[(s_file_name, t_file_name)] + "\n"
@@ -100,14 +81,11 @@ def run_basic_compare(database_name, alignment_mode):
     # Recive info from workers
     info = []
     info.append("Alignment mode: " + alignment_mode)
-    info.append("Comparasion Technique used: Sequential Levenshtein")
+    info.append("Comparasion Technique used: " + alignment_function.__name__)
     info.append("\n>>Wall time: %0.4f s\n" % spent_time)
 
-    #print "\nTime to read document %0.4f\n" % (total_read_time)
-    #print "\nTime to computing alginment documents %0.4f\n" % (total_alignment_time)
-    #print "\n>>Wall time: %0.4f s\n" % spent_time
-
     return info, results_str
+
 
 def write_output_results(database_name, info, results):
     #convert info from workers and master in string
@@ -141,12 +119,14 @@ def write_output_results(database_name, info, results):
 def __main__(argv):
 
     alignment_mode = PARAGRAPH_BY_WORDS_ALIGNMENT_MODE
+    alignment_function = sequential_levenshtein
 
     try:
-        opts, args = getopt.getopt(argv, "D:w:m:", ["database=","alignment_mode="])
+        opts, args = getopt.getopt(argv, "D:m:f:", ["database=","alignment_mode=", "alignment_function="])
     except getopt.GetoptError:
         print 'no_distributed -D <database_path>'
         sys.exit(2)
+
     for opt, arg in opts:
         if opt in ('-h', '--help'):
             print 'no_distributed -D <database_path>'
@@ -157,11 +137,16 @@ def __main__(argv):
             if arg == "word":
                 alignment_mode = WORD_ALIGNMENT_MODE
             elif arg == "char":
-                alignment_mode == CHAR_ALIGNMENT_MODE
+                alignment_mode = CHAR_ALIGNMENT_MODE
             elif arg == "paragraph_by_words":
                 alignment_mode = PARAGRAPH_BY_WORDS_ALIGNMENT_MODE
+        elif opt in ("-f", "--alignment_function"):
+            if arg == "sequential_levenshtein":
+                alignment_function = sequential_levenshtein
+            elif arg == "parallel_levenshtein":
+                alignment_function = parallel_levenshtein
 
-    info, results = run_basic_compare(database_name, alignment_mode)
+    info, results = run_basic_compare(database_name, alignment_mode, alignment_function)
     write_output_results(database_name, info, results)
 
 
