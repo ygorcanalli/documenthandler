@@ -1,0 +1,147 @@
+Data base name: ../instances/loren/
+Number of MPI process: 17
+---------------------------------------------------------------
+Host name: drmanhattan rank: 1
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 6.6364 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 2
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 7.8108 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 3
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 6.5596 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 4
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 2.1949 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 5
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 1.8933 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 6
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 6.0638 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 7
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 5.8472 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 8
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 8.4682 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 9
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 6.0334 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 11
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 1.8709 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 12
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 5.6754 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 13
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 6.8085 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 14
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 4.2840 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 15
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 5.1645 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 16
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 8.3113 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 10
+Alignment mode: Paragraph by words
+Comparasion Technique used: sequential_levenshtein
+Spend time: 8.8685 s
+
+
+>>Wall time: 8.8727 s
+
+Results: 
+[03][02]=0.0000
+[44][02]=0.0000
+[30][04]=0.0000
+[30][03]=0.0000
+[03][43]=0.0000
+[38][21]=1.0000
+[21][04]=0.3352
+[03][45]=0.0000
+[44][45]=0.7667
+[03][04]=0.0000
+[38][44]=0.5217
+[30][43]=0.0000
+[02][45]=0.0000
+[04][02]=0.0000
+[17][43]=0.0000
+[17][44]=0.0000
+[38][30]=0.0000
+[44][43]=0.0000
+[04][45]=0.8380
+[38][17]=0.0000
+[17][45]=0.0000
+[38][43]=0.0000
+[21][45]=0.4000
+[44][03]=0.0000
+[21][30]=0.0000
+[38][02]=0.0000
+[21][44]=0.5217
+[30][45]=0.0000
+[44][30]=0.0000
+[45][43]=0.0000
+[17][21]=0.0000
+[44][04]=0.6425
+[30][02]=0.0000
+[17][02]=0.0000
+[17][03]=0.0000
+[04][43]=0.0000
+[38][45]=0.4000
+[38][04]=0.3352
+[38][03]=0.0000
+[17][30]=1.0000
+[21][03]=0.0000
+[21][02]=0.0000
+[02][43]=0.0000
+[17][04]=0.0000
+[21][43]=0.0000

@@ -1,0 +1,147 @@
+Data base name: ../instances/balanced_loren/
+Number of MPI process: 17
+---------------------------------------------------------------
+Host name: drmanhattan rank: 1
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1084 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 2
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1305 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 3
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1272 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 4
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1156 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 5
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1241 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 6
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1319 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 7
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1136 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 8
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1549 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 9
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1192 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 10
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1269 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 11
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1240 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 13
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1088 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 14
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1176 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 15
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1261 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 16
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.0978 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 12
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.1730 s
+
+
+>>Wall time: 0.1767 s
+
+Results: 
+[08][10]=0.0733
+[07][01]=1.0000
+[05][06]=0.0757
+[03][10]=0.7569
+[07][09]=1.0000
+[01][02]=0.0934
+[07][04]=0.8941
+[04][06]=0.0631
+[07][10]=0.7569
+[06][09]=0.0710
+[03][09]=1.0000
+[08][09]=0.0745
+[03][04]=0.8941
+[01][05]=0.0729
+[01][04]=0.8941
+[04][02]=0.0916
+[05][04]=0.0774
+[02][10]=0.0948
+[02][08]=0.0638
+[01][09]=1.0000
+[02][09]=0.0934
+[01][03]=1.0000
+[05][09]=0.0729
+[05][03]=0.0729
+[02][06]=0.0710
+[06][10]=0.0473
+[03][08]=0.0745
+[08][06]=0.7494
+[03][02]=0.0934
+[07][08]=0.0745
+[07][03]=1.0000
+[10][09]=0.7569
+[01][08]=0.0745
+[04][10]=0.8466
+[05][08]=0.0721
+[04][08]=0.0733
+[03][06]=0.0710
+[01][10]=0.7569
+[04][09]=0.8941
+[07][02]=0.0934
+[01][06]=0.0710
+[07][06]=0.0710
+[05][10]=0.0862
+[05][02]=0.7898
+[07][05]=0.0729

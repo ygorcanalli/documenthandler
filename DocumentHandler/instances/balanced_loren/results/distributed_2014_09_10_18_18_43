@@ -1,0 +1,99 @@
+Data base name: ../instances/balanced_loren/
+Number of MPI process: 9
+---------------------------------------------------------------
+Host name: qwi3-PC rank: 1
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 3.5090 s
+
+---------------------------------------------------------------
+Host name: qwi3-PC rank: 2
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 3.5868 s
+
+---------------------------------------------------------------
+Host name: qwi3-PC rank: 3
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 2.8069 s
+
+---------------------------------------------------------------
+Host name: qwi3-PC rank: 4
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 3.3653 s
+
+---------------------------------------------------------------
+Host name: qwi3-PC rank: 5
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 3.0875 s
+
+---------------------------------------------------------------
+Host name: qwi3-PC rank: 6
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 2.5670 s
+
+---------------------------------------------------------------
+Host name: qwi3-PC rank: 8
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 2.5228 s
+
+---------------------------------------------------------------
+Host name: qwi3-PC rank: 7
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 3.6577 s
+
+
+>>Wall time: 3.6206 s
+
+Results: 
+[03][02]=0.2898
+[07][01]=1.0000
+[05][06]=0.2715
+[10][07]=0.7584
+[10][08]=0.2864
+[09][05]=0.2889
+[03][05]=0.2889
+[03][01]=1.0000
+[07][04]=0.8998
+[06][04]=0.2852
+[07][05]=0.2889
+[03][04]=0.8998
+[09][01]=1.0000
+[09][02]=0.2898
+[02][05]=0.7817
+[02][08]=0.2178
+[10][03]=0.7584
+[10][06]=0.2565
+[02][04]=0.2837
+[07][09]=1.0000
+[02][01]=0.2898
+[06][01]=0.2879
+[10][02]=0.2687
+[02][06]=0.2568
+[03][07]=1.0000
+[09][08]=0.2678
+[03][08]=0.2678
+[09][04]=0.8998
+[10][05]=0.2887
+[08][06]=0.7521
+[10][01]=0.7584
+[07][08]=0.2678
+[10][09]=0.7584
+[05][04]=0.2940
+[10][04]=0.8429
+[09][06]=0.2879
+[08][04]=0.2793
+[08][05]=0.2498
+[04][01]=0.8998
+[03][06]=0.2879
+[08][01]=0.2678
+[07][02]=0.2898
+[05][01]=0.2889
+[07][06]=0.2879
+[03][09]=1.0000

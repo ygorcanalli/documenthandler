@@ -1,0 +1,99 @@
+Data base name: ../instances/balanced_loren/
+Number of MPI process: 9
+---------------------------------------------------------------
+Host name: venom rank: 2
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 1.0130 s
+
+---------------------------------------------------------------
+Host name: venom rank: 3
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 1.1130 s
+
+---------------------------------------------------------------
+Host name: venom rank: 4
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 1.2192 s
+
+---------------------------------------------------------------
+Host name: venom rank: 5
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.8920 s
+
+---------------------------------------------------------------
+Host name: venom rank: 6
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.9602 s
+
+---------------------------------------------------------------
+Host name: venom rank: 7
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 1.2157 s
+
+---------------------------------------------------------------
+Host name: venom rank: 8
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.8376 s
+
+---------------------------------------------------------------
+Host name: venom rank: 1
+Alignment mode: Char
+Comparasion Technique used: sequential_levenshtein
+Spend time: 1.2819 s
+
+
+>>Wall time: 1.2828 s
+
+Results: 
+[03][02]=0.2898
+[05][06]=0.2715
+[10][07]=0.7584
+[10][08]=0.2864
+[08][02]=0.2178
+[03][05]=0.2889
+[01][02]=0.2898
+[03][01]=1.0000
+[04][06]=0.2852
+[03][09]=1.0000
+[09][08]=0.2678
+[03][04]=0.8998
+[09][01]=1.0000
+[05][09]=0.2889
+[04][07]=0.8998
+[09][02]=0.2898
+[04][02]=0.2837
+[10][03]=0.7584
+[10][06]=0.2565
+[06][07]=0.2879
+[06][01]=0.2879
+[10][02]=0.2687
+[05][07]=0.2889
+[03][07]=1.0000
+[08][07]=0.2678
+[03][08]=0.2678
+[10][05]=0.2887
+[05][01]=0.2889
+[01][07]=1.0000
+[10][01]=0.7584
+[06][08]=0.7521
+[10][09]=0.7584
+[10][04]=0.8429
+[09][06]=0.2879
+[09][07]=1.0000
+[04][05]=0.2940
+[05][08]=0.2498
+[04][08]=0.2793
+[04][01]=0.8998
+[03][06]=0.2879
+[08][01]=0.2678
+[04][09]=0.8998
+[07][02]=0.2898
+[06][02]=0.2568
+[05][02]=0.7817

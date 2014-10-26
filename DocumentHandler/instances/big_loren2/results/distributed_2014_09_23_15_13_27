@@ -1,0 +1,60 @@
+Data base name: ../instances/big_loren2
+Number of MPI process: 9
+---------------------------------------------------------------
+Host name: drmanhattan rank: 1
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.8527 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 3
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.8535 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 4
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.8674 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 5
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.8499 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 6
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.8718 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 7
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.0010 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 8
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.0006 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 2
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 0.8721 s
+
+
+>>Wall time: 0.8738 s
+
+Results: 
+[16][07 (copy)]=1.0000
+[07][16]=1.0000
+[07][16 (copy)]=1.0000
+[07 (copy)][16 (copy)]=1.0000
+[07][07 (copy)]=1.0000
+[16][16 (copy)]=1.0000

@@ -1,0 +1,82 @@
+Data base name: ../instances/big_loren2
+Number of MPI process: 9
+---------------------------------------------------------------
+Host name: drmanhattan rank: 1
+Alignment mode: Word
+Comparasion Technique used: parallel_levenshtein
+Spend time: 3.2318 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 2
+Alignment mode: Word
+Comparasion Technique used: parallel_levenshtein
+Spend time: 3.4075 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 3
+Alignment mode: Word
+Comparasion Technique used: parallel_levenshtein
+Spend time: 3.0085 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 5
+Alignment mode: Word
+Comparasion Technique used: parallel_levenshtein
+Spend time: 2.5465 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 6
+Alignment mode: Word
+Comparasion Technique used: parallel_levenshtein
+Spend time: 2.8639 s
+
+---------------------------------------------------------------
+Host name: drmanhattan rank: 7
+Alignment mode: Word
+Comparasion Technique used: parallel_levenshtein
+Spend time: 2.4866 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 8
+Alignment mode: Word
+Comparasion Technique used: parallel_levenshtein
+Spend time: 3.1496 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 4
+Alignment mode: Word
+Comparasion Technique used: parallel_levenshtein
+Spend time: 3.5263 s
+
+
+>>Wall time: 3.5263 s
+
+Results: 
+[16 (3rd copy)][16 (another copy)]=1.0000
+[07 (copy)][07 (3rd copy)]=1.0000
+[16 (copy)][16 (another copy)]=1.0000
+[07 (copy)][16 (copy)]=1.0000
+[16 (copy)][07 (3rd copy)]=1.0000
+[16 (another copy)][07 (3rd copy)]=1.0000
+[16][16 (copy)]=1.0000
+[16 (another copy)][07 (another copy)]=1.0000
+[07][07 (3rd copy)]=1.0000
+[16][16 (3rd copy)]=1.0000
+[16 (copy)][07 (another copy)]=1.0000
+[07][16]=1.0000
+[07][16 (copy)]=1.0000
+[07][07 (copy)]=1.0000
+[07][07 (another copy)]=1.0000
+[07][16 (another copy)]=1.0000
+[16][07 (copy)]=1.0000
+[16][07 (another copy)]=1.0000
+[16 (3rd copy)][07 (3rd copy)]=1.0000
+[16 (3rd copy)][07 (copy)]=1.0000
+[07 (another copy)][07 (3rd copy)]=1.0000
+[16 (3rd copy)][07 (another copy)]=1.0000
+[16][07 (3rd copy)]=1.0000
+[16][16 (another copy)]=1.0000
+[07 (copy)][16 (another copy)]=1.0000
+[16 (3rd copy)][16 (copy)]=1.0000
+[07 (copy)][07 (another copy)]=1.0000
+[07][16 (3rd copy)]=1.0000

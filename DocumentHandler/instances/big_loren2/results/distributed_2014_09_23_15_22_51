@@ -1,0 +1,46 @@
+Data base name: ../instances/big_loren2
+Number of MPI process: 3
+---------------------------------------------------------------
+Host name: apocalypse rank: 2
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 11.3460 s
+
+---------------------------------------------------------------
+Host name: apocalypse rank: 1
+Alignment mode: Word
+Comparasion Technique used: sequential_levenshtein
+Spend time: 11.4179 s
+
+
+>>Wall time: 11.4180 s
+
+Results: 
+[16 (3rd copy)][16 (another copy)]=1.0000
+[07][16 (copy)]=1.0000
+[16 (copy)][16 (another copy)]=1.0000
+[07 (copy)][16 (copy)]=1.0000
+[16 (copy)][07 (3rd copy)]=1.0000
+[16 (another copy)][07 (3rd copy)]=1.0000
+[16][16 (copy)]=1.0000
+[16 (another copy)][07 (another copy)]=1.0000
+[07][07 (3rd copy)]=1.0000
+[16][16 (3rd copy)]=1.0000
+[16 (3rd copy)][16 (copy)]=1.0000
+[07][16]=1.0000
+[07 (copy)][07 (3rd copy)]=1.0000
+[07][07 (copy)]=1.0000
+[07][07 (another copy)]=1.0000
+[07][16 (another copy)]=1.0000
+[16][07 (copy)]=1.0000
+[16][07 (another copy)]=1.0000
+[16 (3rd copy)][07 (3rd copy)]=1.0000
+[16 (3rd copy)][07 (copy)]=1.0000
+[07 (another copy)][07 (3rd copy)]=1.0000
+[16 (3rd copy)][07 (another copy)]=1.0000
+[16][07 (3rd copy)]=1.0000
+[16][16 (another copy)]=1.0000
+[07 (copy)][16 (another copy)]=1.0000
+[16 (copy)][07 (another copy)]=1.0000
+[07 (copy)][07 (another copy)]=1.0000
+[07][16 (3rd copy)]=1.0000
