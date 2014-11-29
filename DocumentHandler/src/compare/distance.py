@@ -76,8 +76,10 @@ def jaccard_similarity(list_s, list_t):
     
     len_insersection = len(set_s.intersection(set_t))
     len_union = len(set_s.union(set_t))
+     
+    dis = float(len_insersection) / float(len_union)
     
-    return float(len_insersection) / float(len_union)
+    return dis
 
 
 def dissimilarity(s_len, t_len, distance):
