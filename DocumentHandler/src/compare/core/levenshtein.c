@@ -1,4 +1,5 @@
 #include "levenshtein.h"
+#include <stdio.h>
 
 /*===========General Constants==============================*/
 unsigned int hcpu_list[] = {0};
@@ -13,6 +14,8 @@ unsigned short int sequential_levenshtein(long* s, unsigned int len_s, long* t, 
 	unsigned short int** d; //[len_s + 1][len_t + 1];
 	unsigned short int distance;
 
+	if (equality_map == NULL)
+		printf("Mapa nulo!!!!\n");
 	/*allocate distance matrix*/
 	d = (unsigned short int**) malloc (sizeof(unsigned short int*) * (len_s + 1));
 	for (i = 0; i < len_s + 1; i++)

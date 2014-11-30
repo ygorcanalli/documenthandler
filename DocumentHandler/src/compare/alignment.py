@@ -6,6 +6,27 @@ Created on Jun 20, 2014
 
 from distance import *
 
+def align_paragraphs(s_content, t_content, alignment_function):
+    s_words = s_content.get_paragraphs()
+    t_words = t_content.get_paragraphs()
+
+    s_len = len(s_words)
+    t_len = len(t_words)
+
+    # Call function
+    return  alignment_function(s_words.to_hash_list(), t_words.to_hash_list())
+
+    
+
+def align_sentences(s_content, t_content, alignment_function):
+    s_words = s_content.get_sentences()
+    t_words = t_content.get_sentences()
+
+    s_len = len(s_words)
+    t_len = len(t_words)
+
+    # Call function
+    return  alignment_function(s_words.to_hash_list(), t_words.to_hash_list())
 
 def align_words(s_content, t_content, alignment_function):
     s_words = s_content.get_words()
@@ -15,9 +36,7 @@ def align_words(s_content, t_content, alignment_function):
     t_len = len(t_words)
 
     # Call function
-    distance = alignment_function(s_words.to_hash_list(), t_words.to_hash_list())
-
-    return similarity(s_len, t_len, distance)
+    return  alignment_function(s_words.to_hash_list(), t_words.to_hash_list())
 
 def align_chars(s_content, t_content, alignment_function):
     s_chars = s_content.get_chars()
@@ -27,9 +46,7 @@ def align_chars(s_content, t_content, alignment_function):
     t_len = len(t_chars)
 
     # Call function
-    distance = alignment_function(s_chars.to_hash_list(), t_chars.to_hash_list())
-
-    return similarity(s_len, t_len, distance)
+    return alignment_function(s_chars.to_hash_list(), t_chars.to_hash_list())
 
 
 def align_paragraph_by_words(s_content, t_content, treshold, alignment_function):

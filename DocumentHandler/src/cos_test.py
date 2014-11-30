@@ -8,17 +8,21 @@ Created on Sun Oct 26 23:59:57 2014
 from src.model import document_from_pkl
 from src.model import container
 from src.model import content
-from src.compare.distance import *
+#from src.compare.distance import *
+from src.compare.structural_similarity import *
 
 #%%
-s = document_from_pkl("../instances/loren/pickled/02.pkl")
-t = document_from_pkl("../instances/loren/pickled/03.pkl")
+s = document_from_pkl("../instances/hierarchical_test/pickled/genesis1.pkl")
+t = document_from_pkl("../instances/hierarchical_test/pickled/copy-of-genesis1.pkl")
 
 s_words_hash = s.get_words().to_hash_list()
 t_words_hash = t.get_words().to_hash_list()
-#%%
-print "Cosine similarity: %f" % cos_similarity(s_words_hash, t_words_hash)
 
-print "Jaccard similarity: %f" % jaccard_similarity(s_words_hash, t_words_hash)
+print list_of_paragraphs(s, t, threshold=None, granule_alignment_funcion=None)
+print list_of_paragraphs(s, t, threshold=0.8, granule_alignment_funcion=bag_of_words)
+#%%
+#print "Cosine similarity: %f" % cos_similarity(s_words_hash, t_words_hash)
+
+#print "Jaccard similarity: %f" % jaccard_similarity(s_words_hash, t_words_hash)
 
 #%%

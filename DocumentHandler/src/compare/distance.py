@@ -8,7 +8,8 @@ from core import liblevenshtein
 import numpy as np
 
 
-
+def normalized_sequential_levenshtein(list_s, list_t, *args, **kwargs):
+    return similarity(len(list_s), len(list_t), sequential_levenshtein(list_s, list_t, *args, **kwargs))
 
 def parallel_levenshtein(list_s, list_t, *args, **kwargs):
     s_len = len(list_s)
