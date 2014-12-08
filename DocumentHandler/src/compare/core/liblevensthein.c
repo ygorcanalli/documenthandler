@@ -71,15 +71,18 @@ void convertArgs(PyObject *args, long** s, unsigned int* len_s, long** t, unsign
 	unsigned int len_set_s;
 	unsigned int len_set_t;
 
+	_swap = 0;
+
 	if (!PyArg_ParseTuple(args, "OIOI|OOIOI", &seq_s, len_s, &seq_t, len_t, &equality_dict, &set_s, &len_set_s, &set_t, &len_set_t))
 	{
 		printf("\nerror: invalid parameters!");
 		exit(1);
 		//return NULL;
 	}
-
+	
 	*s = convertPySequenceToCArray(seq_s, *len_s);
 	*t = convertPySequenceToCArray(seq_t, *len_t);
+
 
 	if(*len_t < *len_s)
 	{
@@ -95,6 +98,7 @@ void convertArgs(PyObject *args, long** s, unsigned int* len_s, long** t, unsign
 	}
 	else
 		*equality_map = NULL;
+
 
 	/*error*/
 	if((s == NULL) || (t == NULL) || (equality_map == NULL && equality_dict != NULL))
@@ -199,6 +203,7 @@ MatrixMap* convertPyDictToMatrixMap(PyObject* equality_dict, PyObject* set_s, un
 		byte_value = (byte) PyLong_AsLong(value);
 
 		//Swap
+
 		if(!_swap)
 			splitKey(key, &s_key, &t_key);
 		else
