@@ -12,8 +12,8 @@ from src.model import content
 from src.compare.structural_similarity import *
 
 #%%
-s = document_from_pkl("../instances/hierarchical_test/pickled/genesis1.pkl")
-t = document_from_pkl("../instances/hierarchical_test/pickled/copy-of-genesis1.pkl")
+t = document_from_pkl("../instances/hierarchical_test/pickled/genesis1.pkl")
+s = document_from_pkl("../instances/hierarchical_test/pickled/copy-of-genesis1.pkl")
 
 s_words_hash = s.get_words().to_hash_list()
 t_words_hash = t.get_words().to_hash_list()

@@ -6,6 +6,10 @@ void convertArgs(PyObject *, long**, unsigned int*, long**, unsigned int*, Trian
 long* convertPySequenceToCArray(PyObject*, unsigned int);
 TriangularMatrixMap* convertPyDictToTriangularMatrixMap(PyObject*, PyObject*, unsigned int, PyObject*, unsigned int);
 void splitKey(PyObject*, long*, long*);
+void swap(void** s, unsigned int* len_s, void** t, unsigned int* len_t);
+
+
+unsigned short _swap = 0;
 
 static PyObject* liblevenshtein_parallel_levensthein(PyObject *self, PyObject *args)
 {
@@ -77,8 +81,18 @@ void convertArgs(PyObject *args, long** s, unsigned int* len_s, long** t, unsign
 	*s = convertPySequenceToCArray(seq_s, *len_s);
 	*t = convertPySequenceToCArray(seq_t, *len_t);
 
+	if(*len_t < *len_s)
+	{
+		_swap = 1;
+		swap((void**) s, len_s, (void**) t, len_t);
+		swap((void**) &set_s, &len_set_s, (void**) &set_t, &len_set_t);
+	}
+
 	if((equality_dict != NULL) && (set_s != NULL) && (set_t != NULL))
+	{
 		*equality_map = convertPyDictToTriangularMatrixMap(equality_dict, set_s, len_set_s, set_t, len_set_t);
+
+	}
 	else
 		*equality_map = NULL;
 
@@ -182,16 +196,24 @@ TriangularMatrixMap* convertPyDictToTriangularMatrixMap(PyObject* equality_dict,
 
 	while (PyDict_Next(equality_dict, &pos, &key, &value))
 	{
-
 		byte_value = (byte) PyLong_AsLong(value);
 
-		splitKey(key, &s_key, &t_key);
-	
-		if((byte_value != EQUALS) || (byte_value != DIFFERENT))
+		//Swap
+		if(!_swap)
+			splitKey(key, &s_key, &t_key);
+		else
+			splitKey(key, &t_key, &s_key);
+		
+		if ((byte_value != EQUALS) && (byte_value != DIFFERENT))
+		{
+			printf("Worng value on map: %u\n", (unsigned int) byte_value);
 			return NULL;
+		}
 
 		triangularMatrixMapPut(equality_map, s_key, t_key, byte_value);
 	}
+
+	//printTriangularMatrixMap(equality_map);
 
 	Py_DECREF(equality_dict);
 
@@ -225,4 +247,20 @@ void splitKey(PyObject* key, long* s_key, long* t_key)
 	Py_DECREF(s_number);
 	Py_DECREF(t_number);
 	Py_DECREF(key);
+}
+
+
+void swap(void** s, unsigned int* len_s, void** t, unsigned int* len_t)
+{
+	void* aux;
+	unsigned int len_aux;
+
+	aux = *t;
+	len_aux = *len_t;
+
+	*t = *s;
+	*len_t = *len_s;
+
+	*s = aux;
+	*len_s = len_aux;
 }

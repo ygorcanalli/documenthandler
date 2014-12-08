@@ -1,6 +1,6 @@
 #include "levenshtein.h"
 #include <stdio.h>
-
+#include <stdlib.h>
 /*===========General Constants==============================*/
 unsigned int hcpu_list[] = {0};
 unsigned int vcpu_list[] = {1};
@@ -14,8 +14,6 @@ unsigned short int sequential_levenshtein(long* s, unsigned int len_s, long* t, 
 	unsigned short int** d; //[len_s + 1][len_t + 1];
 	unsigned short int distance;
 
-	if (equality_map == NULL)
-		printf("Mapa nulo!!!!\n");
 	/*allocate distance matrix*/
 	d = (unsigned short int**) malloc (sizeof(unsigned short int*) * (len_s + 1));
 	for (i = 0; i < len_s + 1; i++)
@@ -32,11 +30,18 @@ unsigned short int sequential_levenshtein(long* s, unsigned int len_s, long* t, 
 	{
 		for (j = 1;  j < (len_t + 1); j++)
 		{
+			//if (i == j)
+				//printf("\n%d(%li, %li): %u\n", i-1, s[i-1], t[j-1], equals(equality_map, s[i-1], t[j-1]));
+
 			if (equals(equality_map, s[i-1], t[j-1]))
 				d[i][j] = MIN3(d[i-1][j] + DEL_COST, d[i][j-1] + INS_COST, d[i-1][j-1]);
 			else
 				d[i][j] = MIN3(d[i-1][j] + DEL_COST, d[i][j-1] + INS_COST, d[i-1][j-1] + EXC_COST);
+
+			//printf("%u\t", d[i][j]);
 		}
+
+		//printf("\n");
 	}
 
 	distance = d[len_s][len_t];
@@ -65,11 +70,6 @@ unsigned short int parallel_levenshtein(long* s, unsigned int len_s, long* t, un
 	/*initalization horizontal semaphore*/
 	pthread_mutex_init(&hmux, NULL);
 	pthread_mutex_lock(&hmux);
-
-
-	/*Always the lowest string is horizontal*/
-	if(len_t < len_s)
-		swap(&s, &len_s, &t, &len_t);
 
 	sizeSD = (len_s == len_t ? len_s : len_s + 1);
 

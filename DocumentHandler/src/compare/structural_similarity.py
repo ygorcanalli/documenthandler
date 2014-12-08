@@ -32,29 +32,33 @@ def list_of_paragraphs(s_content, t_content, granule_alignment_funcion, threshol
     
         s_paragraphs_set = s_paragraphs.to_set()
         t_paragraphs_set = t_paragraphs.to_set()
+
     
         paragraphs_equality = {}
-        
-        i=0
-        j=0
+
     
-        for s_paragraphsi in s_paragraphs_set:
-            for t_paragraphsi in t_paragraphs_set:
-    
-                #print s_paragraphsi
-                #print t_paragraphsi
-                # Align the words of paragraphs
-                simil = granule_alignment_funcion(s_paragraphsi, t_paragraphsi)
-                #print "Simil[%d][%d]=%0.4f\n" % (i,j,simil)
-                # Verify equality by threshold
-                if(simil >= threshold):
-                    equality = 1
+        for s_item in s_paragraphs_set:
+            for t_item in t_paragraphs_set:
+                
+                s_hash = s_item.__hash__()
+                t_hash = t_item.__hash__()
+                                   
+                # Align the words of paragraphs   
+                if (s_item != t_item):
+                    simil = granule_alignment_funcion(s_item, t_item)
+                    
+                    # Verify equality by threshold
+                    #  results accumulation
+                    paragraphs_equality[(s_hash,t_hash)] = (simil >= threshold)
                 else:
-                    equality = 0
-    
-                #  results accumulation
-                paragraphs_equality[(s_paragraphsi.__hash__(),t_paragraphsi.__hash__())] = equality
-    
+                    paragraphs_equality[(s_hash,t_hash)] = 1
+                    
+                #print s_item
+                #print t_item
+                #print str(simil) + "\n"
+                        
         return normalized_sequential_levenshtein(s_paragraphs.to_hash_list(), t_paragraphs.to_hash_list(), equality_dict=paragraphs_equality, set_s=s_paragraphs_set.to_hash_list(), set_t=t_paragraphs_set.to_hash_list())
+        
+ 
         
 

@@ -27,6 +27,7 @@
 	int compareLong (const void * a, const void * b);
 	void sort(long* array, unsigned int length);
 	unsigned int search(long* array, unsigned int length, long key);
-	void swap(long** s, unsigned int* len_s, long** t, unsigned int* len_t);
+
+	void printTriangularMatrixMap(TriangularMatrixMap* equality_map);
 
 #endif
