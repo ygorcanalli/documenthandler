@@ -8,7 +8,7 @@ unsigned int hcpu_list_size = 1;
 unsigned int vcpu_list_size = 1;
 /*==========================================================*/
 
-unsigned short int sequential_levenshtein(long* s, unsigned int len_s, long* t, unsigned int len_t, TriangularMatrixMap* equality_map)
+unsigned short int sequential_levenshtein(long* s, unsigned int len_s, long* t, unsigned int len_t, MatrixMap* equality_map)
 {
 	unsigned int i, j;
 	unsigned short int** d; //[len_s + 1][len_t + 1];
@@ -54,7 +54,7 @@ unsigned short int sequential_levenshtein(long* s, unsigned int len_s, long* t, 
 	return distance;
 }
 
-unsigned short int parallel_levenshtein(long* s, unsigned int len_s, long* t, unsigned int len_t, TriangularMatrixMap* equality_map)
+unsigned short int parallel_levenshtein(long* s, unsigned int len_s, long* t, unsigned int len_t, MatrixMap* equality_map)
 {
 	pthread_t vthread;
 	pthread_t hthread;
@@ -119,7 +119,7 @@ void* hlevenshtein(void* arg)
 	long* s = la->s;
 	unsigned int len_s = la->len_s;
 	long* t = la->t;
-	TriangularMatrixMap* equality_map = la->equality_map;
+	MatrixMap* equality_map = la->equality_map;
 
 	unsigned int i, j, k;
 
@@ -213,7 +213,7 @@ void* vlevenshtein(void* arg)
 	unsigned int len_s = la->len_s;
 	long* t = la->t;
 	unsigned int len_t = la->len_t;
-	TriangularMatrixMap* equality_map = la->equality_map;
+	MatrixMap* equality_map = la->equality_map;
 
 	unsigned int i, j, k;
 
@@ -307,12 +307,12 @@ void* vlevenshtein(void* arg)
 	return 0;
 }
 
-byte equals(TriangularMatrixMap* equality_map, long a, long b)
+byte equals(MatrixMap* equality_map, long a, long b)
 {
 	if (equality_map == NULL)		
 		return (a == b);
 
-	return triangularMatrixMapGet(equality_map, a, b);
+	return matrixMapGet(equality_map, a, b);
 }
 
 void defineCPUAffinity(unsigned int* cpu_list, unsigned int size)

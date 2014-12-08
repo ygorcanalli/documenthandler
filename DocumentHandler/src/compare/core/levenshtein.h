@@ -18,7 +18,7 @@ dL'essentiel est invisible pour les yeux
 #include <semaphore.h>
 #include <sys/types.h>
 #include <sched.h>
-#include "triangular_matrix_map.h"
+#include "matrix_map.h"
 
 /*====================Macros================================*/
 #define MIN3(v1, v2, v3) MIN(MIN(v1, v2), v3)
@@ -40,17 +40,17 @@ typedef struct
 	unsigned int len_s;
 	long* t;
 	unsigned int len_t;
-	TriangularMatrixMap* equality_map;
+	MatrixMap* equality_map;
 }levenshtein_args;
 /*==========================================================*/
 
 
 /*====================Functions headers=====================*/
-unsigned short int sequential_levenshtein(long*, unsigned int, long*, unsigned int, TriangularMatrixMap* equality_map);
-unsigned short int parallel_levenshtein(long*, unsigned int, long*, unsigned int, TriangularMatrixMap* equality_map);
+unsigned short int sequential_levenshtein(long*, unsigned int, long*, unsigned int, MatrixMap* equality_map);
+unsigned short int parallel_levenshtein(long*, unsigned int, long*, unsigned int, MatrixMap* equality_map);
 void* hlevenshtein(void*);
 void* vlevenshtein(void*);
-byte equals(TriangularMatrixMap*, long, long);
+byte equals(MatrixMap*, long, long);
 void defineCPUAffinity(unsigned int*, unsigned int);
 /*==========================================================*/
 

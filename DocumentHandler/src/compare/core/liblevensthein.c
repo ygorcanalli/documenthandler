@@ -2,9 +2,9 @@
 #include "levenshtein.h"
 
 
-void convertArgs(PyObject *, long**, unsigned int*, long**, unsigned int*, TriangularMatrixMap**);
+void convertArgs(PyObject *, long**, unsigned int*, long**, unsigned int*, MatrixMap**);
 long* convertPySequenceToCArray(PyObject*, unsigned int);
-TriangularMatrixMap* convertPyDictToTriangularMatrixMap(PyObject*, PyObject*, unsigned int, PyObject*, unsigned int);
+MatrixMap* convertPyDictToMatrixMap(PyObject*, PyObject*, unsigned int, PyObject*, unsigned int);
 void splitKey(PyObject*, long*, long*);
 void swap(void** s, unsigned int* len_s, void** t, unsigned int* len_t);
 
@@ -18,7 +18,7 @@ static PyObject* liblevenshtein_parallel_levensthein(PyObject *self, PyObject *a
 
 	long* s;
 	long* t;
-	TriangularMatrixMap* equality_map;
+	MatrixMap* equality_map;
 
 	unsigned short int distance;
 
@@ -29,7 +29,7 @@ static PyObject* liblevenshtein_parallel_levensthein(PyObject *self, PyObject *a
 
 	free(s);
 	free(t);
-	freeTriangularMatrixMap(equality_map);
+	freeMatrixMap(equality_map);
 
 	/*return in Python type*/
 	return Py_BuildValue("H", distance);
@@ -42,7 +42,7 @@ static PyObject* liblevenshtein_sequential_levensthein(PyObject *self, PyObject 
 
 	long* s;
 	long* t;
-	TriangularMatrixMap* equality_map;
+	MatrixMap* equality_map;
 
 	unsigned short int distance;
 
@@ -53,13 +53,13 @@ static PyObject* liblevenshtein_sequential_levensthein(PyObject *self, PyObject 
 
 	free(s);
 	free(t);
-	freeTriangularMatrixMap(equality_map);
+	freeMatrixMap(equality_map);
 
 	/*return in Python type*/
 	return Py_BuildValue("H", distance);
 }
 
-void convertArgs(PyObject *args, long** s, unsigned int* len_s, long** t, unsigned int* len_t, TriangularMatrixMap** equality_map)
+void convertArgs(PyObject *args, long** s, unsigned int* len_s, long** t, unsigned int* len_t, MatrixMap** equality_map)
 {
 	PyObject* seq_s;
 	PyObject* seq_t;
@@ -90,7 +90,7 @@ void convertArgs(PyObject *args, long** s, unsigned int* len_s, long** t, unsign
 
 	if((equality_dict != NULL) && (set_s != NULL) && (set_t != NULL))
 	{
-		*equality_map = convertPyDictToTriangularMatrixMap(equality_dict, set_s, len_set_s, set_t, len_set_t);
+		*equality_map = convertPyDictToMatrixMap(equality_dict, set_s, len_set_s, set_t, len_set_t);
 
 	}
 	else
@@ -174,9 +174,9 @@ long* convertPySequenceToCArray(PyObject* seq_x, unsigned int len_x)
 }
 
 
-TriangularMatrixMap* convertPyDictToTriangularMatrixMap(PyObject* equality_dict, PyObject* set_s, unsigned int len_set_s, PyObject* set_t, unsigned int len_set_t)
+MatrixMap* convertPyDictToMatrixMap(PyObject* equality_dict, PyObject* set_s, unsigned int len_set_s, PyObject* set_t, unsigned int len_set_t)
 {
-	TriangularMatrixMap* equality_map;
+	MatrixMap* equality_map;
 
 	PyObject *key, *value;
 	Py_ssize_t pos = 0;
@@ -192,7 +192,7 @@ TriangularMatrixMap* convertPyDictToTriangularMatrixMap(PyObject* equality_dict,
 	s_keys = convertPySequenceToCArray(set_s, len_set_s);
 	t_keys = convertPySequenceToCArray(set_t, len_set_t);
 
-	equality_map = createTriangularMatrixMap(s_keys, len_set_s, t_keys, len_set_t);
+	equality_map = createMatrixMap(s_keys, len_set_s, t_keys, len_set_t);
 
 	while (PyDict_Next(equality_dict, &pos, &key, &value))
 	{
@@ -210,10 +210,10 @@ TriangularMatrixMap* convertPyDictToTriangularMatrixMap(PyObject* equality_dict,
 			return NULL;
 		}
 
-		triangularMatrixMapPut(equality_map, s_key, t_key, byte_value);
+		matrixMapPut(equality_map, s_key, t_key, byte_value);
 	}
 
-	//printTriangularMatrixMap(equality_map);
+	//printMatrixMap(equality_map);
 
 	Py_DECREF(equality_dict);
 

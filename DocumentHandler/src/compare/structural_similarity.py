@@ -5,7 +5,8 @@ Created on Nov 29, 2014
 '''
 
 from alignment import *
-from distance import normalized_sequential_levenshtein, cos_similarity
+from pprint import pprint
+
 
 def bag_of_words(s_content, t_content):
     return align_words(s_content, t_content, cos_similarity)
@@ -56,7 +57,7 @@ def list_of_paragraphs(s_content, t_content, granule_alignment_funcion, threshol
                 #print s_item
                 #print t_item
                 #print str(simil) + "\n"
-                        
+                     
         return normalized_sequential_levenshtein(s_paragraphs.to_hash_list(), t_paragraphs.to_hash_list(), equality_dict=paragraphs_equality, set_s=s_paragraphs_set.to_hash_list(), set_t=t_paragraphs_set.to_hash_list())
         
  
