@@ -1,0 +1,7 @@
+{
+	"wholly_derived_boundary" : 0.85,
+	"partial_derived_boundary" : 0.5,
+	"compare_mode" : "list_of_paragraphs",
+	"granule_mode" : ["bag_of_words"],
+	"threshold" : [0.8]
+}

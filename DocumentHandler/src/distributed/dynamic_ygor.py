@@ -42,21 +42,21 @@ def pop_workload(pairs, size):
     return popped_workload
 
 
-def create_non_repeating_list_of_pairs(file_names):
+def create_list_of_pairs(document_names):
     pairs = []
-    for i in range(0, len(file_names)):
-        for j in range(i+1, len(file_names)):
-            pairs.append((file_names.__getitem__(i), file_names.__getitem__(j)))
+    for i in range(0, len(document_names)):
+        for j in range(i+1, len(document_names)):
+            pairs.append((document_names.__getitem__(i), document_names.__getitem__(j)))
     return pairs
 
 
-def run_alignment(alignment_mode, s_document, t_document, alignment_function):
+def run_alignment(alignment_mode, query, document, alignment_function):
     if alignment_mode == CHAR_ALIGNMENT_MODE:
-        simil = align_chars(s_document, t_document, alignment_function)
+        simil = align_chars(query, document, alignment_function)
     elif alignment_mode == WORD_ALIGNMENT_MODE:
-        simil = align_words(s_document, t_document, alignment_function)
+        simil = align_words(query, document, alignment_function)
     elif alignment_mode == PARAGRAPH_BY_WORDS_ALIGNMENT_MODE:
-        simil = align_paragraph_by_words(s_document, t_document, TRESHOLD, alignment_function)
+        simil = align_paragraph_by_words(query, document, TRESHOLD, alignment_function)
 
     return simil
 
@@ -71,7 +71,7 @@ def run_dynamic_workloaded_master(database_name, n_workers, initial_workload_siz
     results_str = ''
     splited_workload = []
 
-    pairs = create_non_repeating_list_of_pairs(file_names)
+    pairs = create_list_of_pairs(file_names)
 
     # Send initial workload to each worker
     for i in range(0, n_workers):
@@ -188,17 +188,17 @@ def run_dynamic_workloaded_worker(database_name, alignment_mode):
     comm.send(info, 0, tag=INFO)
 
 
-def write_output_results(database_name, info, results):
+def write_output_results(documents_database_name, info, analysis):
     #convert info from workers and master in string
     info_str = '\n'.join(info)
 
     #merge util data    
-    output_str = "Data base name: " + database_name
+    output_str = "Data base name: " + documents_database_name
     output_str += "\nNumber of MPI process: %d" % size
     output_str += "\n" + info_str
-    output_str += "\nResults: \n" + results
+    output_str += "\nResults: \n" + analysis
 
-    output_file_path = database_name + "/results"
+    output_file_path = documents_database_name + "/analysis"
 
     if not os.path.exists(output_file_path):
         os.mkdir(output_file_path)
@@ -214,7 +214,7 @@ def write_output_results(database_name, info, results):
         output_file.write(output_str)
         output_file.close()
     except IOError: 
-        print "Error writing results"
+        print "Error writing analysis"
 
 
 # Read arguments from command line

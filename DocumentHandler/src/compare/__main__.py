@@ -5,9 +5,9 @@ import getopt
 
 import os
 
-from distance import *
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
 
+from structural_similarity import *
 from model import *
 from time import time
 from util import *
@@ -20,7 +20,7 @@ def __main__(argv):
     operation = "compare_database"
 
     try:
-        opts, args = getopt.getopt(argv, "D:A:B:s:t:o:", ["database=", "database_b=","database_b=","sfile=", "tfile=", "ofile="])
+        opts, args = getopt.getopt(argv, "D:A:B:s:t:o:", ["database=", "database_b=","database_b=","sfile=", "tfile=", "outputfile="])
     except getopt.GetoptError:
         print 'model -s <stfile> -t <tfile> -o <outputfile>'
         sys.exit(2)
@@ -119,16 +119,10 @@ def compare_database(database_name):
     for i in range(0, len(documents)):
         for j in range(i+1, len(documents)):
             # Get the words
-            s_words = documents.__getitem__(i).get_words()
-            t_words = documents.__getitem__(j).get_words()
 
-            s_len = len(s_words)
-            t_len = len(t_words)
 
             # Call function
-            distance = str(parallel_levenshtein(s_words.to_hash_list(), t_words.to_hash_list()))
-
-            simil = similarity(s_len, t_len, distance)
+            simil = list_of_paragraphs(documents[i], documents[j], granule_alignment_funcion=bag_of_words, threshold=0.8)
 
             # results accumulation
             output_string += '[' + file_names.__getitem__(i) + '][' + file_names.__getitem__(j) + ']=' + "%0.4f" % simil + '\n'
