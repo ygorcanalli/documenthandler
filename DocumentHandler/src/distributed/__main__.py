@@ -7,6 +7,7 @@ from pprint import pprint
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
 
 from util import *
+import util.meter_handler as meter_handler 
 from compare import structural_similarity
 from mpi4py import MPI
 from time import time
@@ -25,8 +26,6 @@ WORKLOAD = 0
 RESULTS = 1
 INFO = 2
 OK = 3
-
-TRESHOLD = 0.8
 
 
 def split_workload(workload, n_workers):
@@ -53,7 +52,7 @@ def split_workload(workload, n_workers):
 
     return splited_workload
 
-
+"""
 def create_list_of_pairs(query_database_name, document_database_name):
     # List files in database
     query_names = list_dir(query_database_name + "/pickled/", "*.pkl")
@@ -64,20 +63,29 @@ def create_list_of_pairs(query_database_name, document_database_name):
         for d in document_names:
 	        pairs.append( (q, d) )
     return pairs
+"""
 
+def create_list_of_pairs(queries, documents):
+    # List files in database
+    #queries_path = list_dir(query_database_name + "/pickled/", "*.pkl")
+    #documents_path = list_dir(document_database_name + "/pickled/", "*.pkl")
+    
+    pairs = []
+    for q in queries:
+        for d in documents:
+            pairs.append( (meter_handler.pickled_path(q), meter_handler.pickled_path(d)) )
+    return pairs
 
 def run_alignment(alignment_mode, query, document, alignment_function): 
     return None
 
 
-def master(query_database_name, document_database_name, n_workers, config):
+def master(n_workers, config):
+    
+    database_root_path = config["database_root_path"]
     
     start_time = time()
-    splited_workload = []
-
-    wholly_derived_boundary = config["wholly_derived_boundary"]
-    partial_derived_boundary = config["partial_derived_boundary"]
-    
+    splited_workload = []   
 
     pairs = []
     analysis = {}
@@ -87,7 +95,13 @@ def master(query_database_name, document_database_name, n_workers, config):
     partial_derived = set()
     non_derived = set()
 
-    pairs = create_list_of_pairs(query_database_name, document_database_name)
+    queries, relevants = meter_handler.get_queries_path(database_root_path)
+    documents = meter_handler.get_documents_path(database_root_path)
+    
+    pairs = create_list_of_pairs(queries, documents)
+    
+    #pprint(pairs)
+    
     splited_workload = split_workload(pairs, n_workers)
 
     # Send workload to workers
@@ -104,23 +118,23 @@ def master(query_database_name, document_database_name, n_workers, config):
 
     print spent_time
 
+    queries_results = {}
     for query_file_name, document_file_name in analysis:
-        analysis_str +=  query_file_name + "\n" + document_file_name + "\n%0.4f\n" % analysis[(query_file_name, document_file_name)] + "\n"
         
-        # Classify results
-        if analysis[(query_file_name, document_file_name)] >= wholly_derived_boundary:
-            wholly_derived.add(query_file_name)
-        elif analysis[(query_file_name, document_file_name)] >= partial_derived_boundary and analysis[(query_file_name, document_file_name)] < wholly_derived_boundary:
-            partial_derived.add(query_file_name)
-        else:
-            non_derived.add(query_file_name)
-    
-    # remove from non_derived documents that was classifed as derived 
-    non_derived.difference_update(partial_derived)
-    non_derived.difference_update(wholly_derived)
-    
-    # remove from partial derived documents that was classifid as wholly derived
-    partial_derived.difference_update(wholly_derived)
+        real_name_query = meter_handler.real_path(query_file_name)
+        real_name_document = meter_handler.real_path(document_file_name)
+        
+        if not queries_results.has_key(real_name_query):
+            queries_results[real_name_query] = []
+        
+        # store query results for ranking
+        simil = analysis[(query_file_name, document_file_name)]
+        queries_results[real_name_query].append( (real_name_document, simil) )
+        
+    #sort results
+    for query, query_result in queries_results.iteritems(): 
+        query_result.sort(key=lambda tup: tup[1],reverse=True)
+        analysis_str +=  "Query: " + query + "\nResults: " + str(query_result) + "\n"
     
     # Recive info from workers
     info = []
@@ -129,20 +143,19 @@ def master(query_database_name, document_database_name, n_workers, config):
 
     info.append("\nTime: %0.4f s\n" % spent_time)
 
-    return info, analysis_str, "\n".join(wholly_derived), "\n".join(partial_derived), "\n".join(non_derived)
+    return info, analysis_str
 
 
-def worker(queries_database_name, documents_database_name, config):
+def worker(config):
 
-    wholly_derived_boundary = config["wholly_derived_boundary"]
-    partial_derived_boundary = config["partial_derived_boundary"]
+    database_root_path = config["database_root_path"]
     compare_mode = getattr(structural_similarity, config["compare_mode"])
     granule_mode = None
     threshold = None
         
-    if config.has_key("granule_mode") and config.has_key(threshold):
-        granule_mode = getattr(structural_similarity, config["granule_mode"][0])
-        threshold = config["threshold"][0]
+    if config.has_key("granule_mode") and config.has_key("threshold"):
+        granule_mode = getattr(structural_similarity, config["granule_mode"])
+        threshold = config["threshold"]
         
     
     documents = {}
@@ -157,15 +170,14 @@ def worker(queries_database_name, documents_database_name, config):
     for q, d in workload:
 
         if not q in queries:
-            queries[q] = model.document_from_pkl(queries_database_name + "/pickled/" + q)
+            queries[q] = model.document_from_pkl(database_root_path + q)
 
         if not d in documents:
-            documents[d] = model.document_from_pkl(documents_database_name + "/pickled/" + d)
-
+            documents[d] = model.document_from_pkl(database_root_path + d)
 
         # Fill the result map with similaritys
-        simil = compare_mode(queries[q], documents[d], granule_alignment_funcion=granule_mode, threshold=threshold)
-
+        simil = compare_mode(queries[q], documents[d], granule_alignment_funcion=granule_mode, threshold=threshold)        
+        
         results[(q, d)] = simil
 
     # Send result to master
@@ -177,8 +189,6 @@ def worker(queries_database_name, documents_database_name, config):
     info = []
     info.append("---------------------------------------------------------------")
     info.append("Host name: %s rank: %d" % (name, rank)) 
-    info.append("Wholly derived boundary: " + str(wholly_derived_boundary))
-    info.append("Partial derived boundary: " + str(partial_derived_boundary))
     info.append("Compare mode: " + compare_mode.__name__)
     
     if granule_mode != None and threshold != None:
@@ -191,13 +201,14 @@ def worker(queries_database_name, documents_database_name, config):
     comm.send(info, 0, tag=INFO)
     
 
-def write_output_results(queries_database_name, documents_database_name, info, analysis, wholly_derived, partial_derived, non_derived):
+def write_output_results(info, analysis, config):
     #convert info from workers and master in string
     info_str = '\n'.join(info)
 
+    database_root_path = config["database_root_path"]
+    
     #merge util data
-    output_str = "Queries database name: " + queries_database_name
-    output_str = "Documents database name: " + documents_database_name
+    output_str = "Database root path: " + database_root_path
     output_str += "\nNumber of MPI process: %d" % size
     output_str += "\n" + info_str
     output_str += "\nAnalysis: \n" + analysis
@@ -206,29 +217,12 @@ def write_output_results(queries_database_name, documents_database_name, info, a
     now = datetime.datetime.now()
     formated_time = now.strftime("%Y_%m_%d_%H_%M_%S")
 
-    output_file_path = queries_database_name + "/results/" + formated_time
+    output_file_path = database_root_path + "/documenthandler/results/" + formated_time
 
-    if not os.path.exists(output_file_path):
-        os.mkdir(output_file_path)
+    output_file = open(output_file_path, "w")
+    output_file.write(output_str)
+    output_file.close()     
     
-    try:
-        output_file = open(output_file_path + "/analysis", "w")
-        output_file.write(output_str)
-        output_file.close()
-        
-        output_file = open(output_file_path + "/wholly_derived", "w")
-        output_file.write(wholly_derived)
-        output_file.close()
-        
-        output_file = open(output_file_path + "/partial_derived", "w")
-        output_file.write(partial_derived)
-        output_file.close()
-        
-        output_file = open(output_file_path + "/non_derived", "w")
-        output_file.write(non_derived)
-        output_file.close()
-    except IOError: 
-        print "Error writing analysis"
 
 # Read arguments from command line
 def __main__(argv):
@@ -245,20 +239,16 @@ def __main__(argv):
         if opt in ('-h', '--help'):
             print 'no_distributed -D <database_path>'
             sys.exit()
-        elif opt in ("-Q", "--queries_database_name"):
-            queries_database_name = arg
-        elif opt in ("-D", "--documents_database_name"):
-            documents_database_name = arg
         elif opt in ("-c", "--config_file"):
             config_file = open(arg, "r")
             config = json.load(config_file)
             config_file.close()
     
     if rank == 0:
-        info, analysis, wholly_derived, partial_derived, non_derived = master(queries_database_name, documents_database_name, size - 1, config)
-        write_output_results(queries_database_name, documents_database_name, info, analysis, wholly_derived, partial_derived, non_derived)
+        info, analysis = master(size - 1, config)
+        write_output_results(info, analysis, config)
     else:
-        worker(queries_database_name, documents_database_name, config)
+        worker(config)
     
 
 if __name__ == "__main__":

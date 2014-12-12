@@ -9,13 +9,16 @@ from compare.alignment import align_words, align_sentences, align_paragraphs
 from compare.distance import cos_similarity, normalized_sequential_levenshtein
 import numpy as np
 
-def bag_of_words(s_content, t_content):
+def bag_of_words(s_content, t_content,  *args, **kwargs):
     return align_words(s_content, t_content, cos_similarity)
 
-def list_of_words(s_content, t_content):
+def list_of_words(s_content, t_content,  *args, **kwargs):
     return align_words(s_content, t_content, normalized_sequential_levenshtein)
 
-def bag_of_sentences(s_content, t_content, granule_alignment_funcion, threshold):
+def bag_of_sentences(s_content, t_content,  *args, **kwargs):
+    
+    granule_alignment_funcion = kwargs.get('granule_alignment_funcion', None)
+    threshold = kwargs.get('threshold', None)
     if granule_alignment_funcion == None and threshold == None:
         return align_sentences(s_content, t_content, cos_similarity)
     else:
@@ -25,7 +28,11 @@ def bag_of_sentences(s_content, t_content, granule_alignment_funcion, threshold)
         
         return _hierarchical_cossine_similarity(s_itens, t_itens, granule_alignment_funcion, threshold)
 
-def list_of_sentences(s_content, t_content, granule_alignment_funcion, threshold):
+def list_of_sentences(s_content, t_content,  *args, **kwargs):
+    
+    granule_alignment_funcion = kwargs.get('granule_alignment_funcion', None)
+    threshold = kwargs.get('threshold', None)
+    
     if granule_alignment_funcion == None and threshold == None:
         return align_sentences(s_content, t_content, normalized_sequential_levenshtein)
     else:
@@ -35,7 +42,11 @@ def list_of_sentences(s_content, t_content, granule_alignment_funcion, threshold
         
         return _hierarchical_levenshtein(s_itens, t_itens, granule_alignment_funcion, threshold)
 
-def bag_of_paragraphs(s_content, t_content, granule_alignment_funcion, threshold):
+def bag_of_paragraphs(s_content, t_content,  *args, **kwargs):
+    
+    granule_alignment_funcion = kwargs.get('granule_alignment_funcion', None)
+    threshold = kwargs.get('threshold', None)
+    
     if granule_alignment_funcion == None and threshold == None:
         return align_paragraphs(s_content, t_content, cos_similarity)
     else:
@@ -45,7 +56,11 @@ def bag_of_paragraphs(s_content, t_content, granule_alignment_funcion, threshold
         
         return _hierarchical_cossine_similarity(s_itens, t_itens, granule_alignment_funcion, threshold)
 
-def list_of_paragraphs(s_content, t_content, granule_alignment_funcion, threshold):
+def list_of_paragraphs(s_content, t_content,  *args, **kwargs):
+    
+    granule_alignment_funcion = kwargs.get('granule_alignment_funcion', None)
+    threshold = kwargs.get('threshold', None)
+    
     if granule_alignment_funcion == None and threshold == None:
         return align_paragraphs(s_content, t_content, normalized_sequential_levenshtein)
     else:
