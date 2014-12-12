@@ -1,9 +1,10 @@
+from __future__ import division
 import sys
 import os
 import getopt
 import datetime
 from time import strftime
-from pprint import pprint
+from pprint import pprint, pformat
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
 
 from util import *
@@ -27,13 +28,42 @@ RESULTS = 1
 INFO = 2
 OK = 3
 
+def interpolated_precision_recall(precision_by_recall):
+    
+    # creates array of 11 elements
+    interpolation = [0] * 11
+    
+    for i in xrange(0, 11):
+        percentil = i / 10.0
+        next_percentil =  (i+1) / 10.0
+        possible_precision = []
+        for recall in precision_by_recall:
+            if percentil <= recall and recall <= next_percentil:
+                possible_precision.append(precision_by_recall[recall]) 
+        if len(possible_precision) > 0:
+            interpolation[i] = max(possible_precision)   
+            
+    return interpolation
+        
+def average_interpolated_precision_recall(discrete_precisions_list):
+    interpolation = [0] * 11
+    
+    n_queries = len(discrete_precisions_list)
+    for i in xrange(0, 11):
+        accum = 0
+        for discrete_precisions in discrete_precisions_list:
+            accum += discrete_precisions[i]
+            
+        interpolation[i] = accum / n_queries
+    return interpolation
 
 def split_workload(workload, n_workers):
 
     splited_workload = []
 
     len_workload = len(workload)
-    workload_split_size = len_workload / n_workers
+    # floor division
+    workload_split_size = len_workload // n_workers
     remainder_workload = len_workload % n_workers
 
     for i in range(0, n_workers):
@@ -97,19 +127,17 @@ def master(n_workers, config):
 
     queries, relevants = meter_handler.get_queries_path(database_root_path)
     documents = meter_handler.get_documents_path(database_root_path)
-    
+        
     pairs = create_list_of_pairs(queries, documents)
-    
-    #pprint(pairs)
     
     splited_workload = split_workload(pairs, n_workers)
 
     # Send workload to workers
-    for i in range(0, n_workers):
-        comm.send(splited_workload.__getitem__(i), dest = i + 1, tag=WORKLOAD)
+    for n_retrived in range(0, n_workers):
+        comm.send(splited_workload.__getitem__(n_retrived), dest = n_retrived + 1, tag=WORKLOAD)
 
     # Receive analysis and merge the result map
-    for i in range(0, n_workers):
+    for n_retrived in range(0, n_workers):
         worker_results = comm.recv(source=MPI.ANY_SOURCE, tag=RESULTS)
         analysis.update(worker_results)
 
@@ -119,6 +147,7 @@ def master(n_workers, config):
     print spent_time
 
     queries_results = {}
+    
     for query_file_name, document_file_name in analysis:
         
         real_name_query = meter_handler.real_path(query_file_name)
@@ -131,17 +160,54 @@ def master(n_workers, config):
         simil = analysis[(query_file_name, document_file_name)]
         queries_results[real_name_query].append( (real_name_document, simil) )
         
+    precision_recall_map = {}
+    interpolate_precisions_list = []
+    
     #sort results
     for query, query_result in queries_results.iteritems(): 
+        precision_recall_map[query] = {}
+        
         query_result.sort(key=lambda tup: tup[1],reverse=True)
-        analysis_str +=  "Query: " + query + "\nResults: " + str(query_result) + "\n"
+        
+        n_retrived = 1
+        n_relevants = len(relevants[query])
+        n_relevants_retrived = 0
+        
+        for result, simil in query_result:
+            
+            # if the result is relevant for query, increment
+            if result in relevants[query]:
+                n_relevants_retrived += 1    
+            
+            precision = float(n_relevants_retrived) / float(n_retrived)
+            recall = float(n_relevants_retrived) / float(n_relevants)
+            
+            #print("Precision: %d/%d=%f Recall: %d/%d=%f\n") % (n_relevants_retrived, n_retrived, precision, n_relevants_retrived, n_relevants, recall)
+            
+            # store the max precision for each recall
+            if not precision_recall_map[query].has_key(recall):
+                precision_recall_map[query][recall] = precision
+            else:
+                precision_recall_map[query][recall] = max(precision_recall_map[query][recall],precision)
+            
+
+            n_retrived += 1
+            
+        analysis_str +=  "\n------------------Query------------------\n" + query + "\nResults:\t" + pformat(query_result) + "\nPrecision recall map:\t" + pformat(precision_recall_map[query])
+        
+        # store the interpolated precision for each query
+        interpolate_precisions_list.append(interpolated_precision_recall(precision_recall_map[query]))
     
+    average_interpolated_precision = average_interpolated_precision_recall(interpolate_precisions_list)
+           
+    pprint(interpolate_precisions_list)
     # Recive info from workers
     info = []
-    for i in range(0, n_workers):
+    for n_retrived in range(0, n_workers):
         info.extend(comm.recv(source=MPI.ANY_SOURCE, tag=INFO))
 
     info.append("\nTime: %0.4f s\n" % spent_time)
+    info.append("\n\nAverage interpolated precision by recall: " + str(average_interpolated_precision))
 
     return info, analysis_str
 

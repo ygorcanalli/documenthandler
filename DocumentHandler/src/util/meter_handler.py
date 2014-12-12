@@ -23,11 +23,12 @@ def get_documents_path(root):
 def get_queries_path(root):
     filenames_list =[
             #('courts','wholly_derived.txt'),
+            #('courts','partially_derived.txt'),
+            #('showbiz','wholly_derived.txt'),
             ('showbiz','partially_derived.txt')
     ]
     
     queries_path = []
-    index_path = []
     relevants_path = {}
 
     relevants_map = {}
@@ -38,18 +39,18 @@ def get_queries_path(root):
        
         for query_pathi in pa_file.readlines():
             query_pathi = query_pathi.rstrip()
-            as_array =  query_pathi.split('/')[0:-1]
+            as_array =  query_pathi.split('/')[1:-1]
             as_array[0] = root
             as_array[1] = 'PA' 
             index_root_path = "/".join((as_array))
             queryi_relevants = os.listdir(index_root_path)
-
+            
+            relative_index_path = index_root_path.replace(root, "/meter_corpus")
             relevants_map[query_pathi] = []
             queries_path.append(query_pathi)
             
             for indexi in queryi_relevants:
-                index_path.append(indexi)
-                relevants_map[query_pathi].append(index_root_path + "/" + indexi)
+                relevants_map[query_pathi].append(relative_index_path + "/" + indexi)
            
             relevants_path[query_pathi] = queryi_relevants
     return queries_path, relevants_map
