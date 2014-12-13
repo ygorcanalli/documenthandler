@@ -3,7 +3,7 @@ import os
 def get_documents_path(root):
     
     filenames_list =[
-            #('courts','PA_court_files.txt'),
+            ('courts','PA_court_files.txt'),
             ('showbiz','PA_showbiz_files.txt')
     ]
     
@@ -22,9 +22,9 @@ def get_documents_path(root):
 
 def get_queries_path(root):
     filenames_list =[
-            #('courts','wholly_derived.txt'),
-            #('courts','partially_derived.txt'),
-            #('showbiz','wholly_derived.txt'),
+            ('courts','wholly_derived.txt'),
+            ('courts','partially_derived.txt'),
+            ('showbiz','wholly_derived.txt'),
             ('showbiz','partially_derived.txt')
     ]
     

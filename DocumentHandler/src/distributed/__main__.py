@@ -35,10 +35,9 @@ def interpolated_precision_recall(precision_by_recall):
     
     for i in xrange(0, 11):
         percentil = i / 10.0
-        next_percentil =  (i+1) / 10.0
         possible_precision = []
         for recall in precision_by_recall:
-            if percentil <= recall and recall <= next_percentil:
+            if percentil <= recall:
                 possible_precision.append(precision_by_recall[recall]) 
         if len(possible_precision) > 0:
             interpolation[i] = max(possible_precision)   
@@ -91,7 +90,7 @@ def create_list_of_pairs(query_database_name, document_database_name):
     pairs = []
     for q in query_names:
         for d in document_names:
-	        pairs.append( (q, d) )
+            pairs.append( (q, d) )
     return pairs
 """
 
@@ -200,7 +199,6 @@ def master(n_workers, config):
     
     average_interpolated_precision = average_interpolated_precision_recall(interpolate_precisions_list)
            
-    pprint(interpolate_precisions_list)
     # Recive info from workers
     info = []
     for n_retrived in range(0, n_workers):
@@ -292,11 +290,9 @@ def write_output_results(info, analysis, config):
 
 # Read arguments from command line
 def __main__(argv):
-
-    config = {}
     
     try:
-        opts, args = getopt.getopt(argv, "Q:D:c:", ["queries_database_name=""documents_database_name=","config_file="])
+        opts, args = getopt.getopt(argv, "c:", ["config_file="])
     except getopt.GetoptError:
         print 'Illegal arguments'
         sys.exit(2)
@@ -307,14 +303,15 @@ def __main__(argv):
             sys.exit()
         elif opt in ("-c", "--config_file"):
             config_file = open(arg, "r")
-            config = json.load(config_file)
+            configs = json.load(config_file)
             config_file.close()
     
-    if rank == 0:
-        info, analysis = master(size - 1, config)
-        write_output_results(info, analysis, config)
-    else:
-        worker(config)
+    for config in configs:
+        if rank == 0:
+            info, analysis = master(size - 1, config)
+            write_output_results(info, analysis, config)
+        else:
+            worker(config)
     
 
 if __name__ == "__main__":
