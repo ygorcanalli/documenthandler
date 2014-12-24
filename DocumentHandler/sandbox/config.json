@@ -1,0 +1,8 @@
+{
+    "corpus_path" : "/home/ygor/git/documenthandler/DocumentHandler/instances/loren/pickled",
+    "queries_path" : "/home/ygor/git/documenthandler/DocumentHandler/instances/balanced_loren/pickled",
+    "results_path" : "/home/ygor/git/documenthandler/DocumentHandler/sandbox/result.json",
+	"compare_mode" : "list_of_paragraphs",
+	"granule_mode" : "bag_of_words",
+	"threshold" : 0.5
+}

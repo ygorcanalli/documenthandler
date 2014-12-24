@@ -3,8 +3,8 @@ Created on Apr 30, 2014
 
 @author: ygor
 """
-from __future__ import division
-from core import liblevenshtein
+
+from .core import liblevenshtein
 import numpy as np
 
 
@@ -60,9 +60,9 @@ def cos_similarity(list_s, list_t):
     i = 0
     
     for k in keys:
-        if bag_s.has_key(k):
+        if k in bag_s:
             array_s[i] = bag_s.get(k)
-        if bag_t.has_key(k):
+        if k in bag_t:
             array_t[i] = bag_t.get(k)
         i = i + 1
     

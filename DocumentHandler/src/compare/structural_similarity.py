@@ -100,14 +100,14 @@ def _hierarchical_cossine_similarity(s_itens, t_itens, granule_alignment_funcion
                       
                 # Verify equality by threshold and build the buckets
                 if simil >= threshold:
-                    if s_similarity_bucket.has_key(s_item):
+                    if s_item in s_similarity_bucket:
                         # make union
                         s_similarity_bucket[s_item].add(t_item)
                     else: 
                         # initialize bucket
                         s_similarity_bucket[s_item] = Set([t_item])
                 
-                    if t_similarity_bucket.has_key(t_item):
+                    if t_item in t_similarity_bucket:
                         # make union
                         t_similarity_bucket[t_item].add(s_item)
                     else:
@@ -119,20 +119,20 @@ def _hierarchical_cossine_similarity(s_itens, t_itens, granule_alignment_funcion
     # build the arrays to cossine sinilarity
     for k in keys:
         # if the item is in document s, counts the normal occurrences
-        if s_bag.has_key(k):
+        if k in s_bag:
             array_s[i] = s_bag.get(k)
         # if the item is not in s, accumulate the occurrence of itens in s that are similar to that item in t (that is, the documents in t_bucket for the item) 
         else:
-            if t_similarity_bucket.has_key(k):
+            if k in t_similarity_bucket:
                 for b in t_similarity_bucket[k]:
                     array_s[i] += s_bag.get(b)
                     
         # if the item is in document t, counts the normal occurrences
-        if t_bag.has_key(k):
+        if k in t_bag:
             array_t[i] = t_bag.get(k)
         # if the item is not in t, accumulate the occurrence of itens in t that are similar to that item in s (that is, the documents in s_bucket for the item) 
         else:       
-            if s_similarity_bucket.has_key(k):
+            if k in s_similarity_bucket:
                 for b in s_similarity_bucket[k]:
                     array_t[i] += t_bag.get(b)
         i = i + 1

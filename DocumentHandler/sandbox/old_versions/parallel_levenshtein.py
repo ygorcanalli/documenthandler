@@ -19,7 +19,7 @@ def main():
 		opts, args = getopt.getopt(sys.argv[1:], 's:t:')
 
 	except getopt.GetoptError as err:
-		print str(err)
+		print(str(err))
 		sys.exit(2)
 
 	for o, a in opts:
@@ -29,7 +29,7 @@ def main():
 			t = a
 	
 	#call levensthein
-	print "The levenshtein distance between words: '" + s + "' and '" + t + "' is " + str(levenshtein(s, t))
+	print("The levenshtein distance between words: '" + s + "' and '" + t + "' is " + str(levenshtein(s, t)))
 
 
 

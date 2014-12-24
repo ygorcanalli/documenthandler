@@ -1,0 +1,1 @@
+{"corpus_path": "/home/ygor/git/documenthandler/DocumentHandler/instances/loren/pickled", "time": 29.17180061340332, "number_of_process": 4, "threshold": 0.5, "compare_mode": "list_of_paragraphs", "granule_mode": "bag_of_words", "queries_path": "/home/ygor/git/documenthandler/DocumentHandler/instances/balanced_loren/pickled"}

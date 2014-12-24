@@ -8,7 +8,6 @@ MatrixMap* convertPyDictToMatrixMap(PyObject*, PyObject*, unsigned int, PyObject
 void splitKey(PyObject*, long*, long*);
 void swap(void** s, unsigned int* len_s, void** t, unsigned int* len_t);
 
-
 unsigned short _swap = 0;
 
 static PyObject* liblevenshtein_parallel_levensthein(PyObject *self, PyObject *args)
@@ -109,22 +108,30 @@ void convertArgs(PyObject *args, long** s, unsigned int* len_s, long** t, unsign
 	}
 }
 
-
-
 static PyMethodDef LiblevenshteinMethods[] = {
 	{"parallel_levenshtein", liblevenshtein_parallel_levensthein, METH_VARARGS, "Description.."},
 	{"sequential_levenshtein", liblevenshtein_sequential_levensthein, METH_VARARGS, "Description.."},
 	{NULL,NULL,0,NULL}
 };
 
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "liblevenshtein",     /* m_name */
+        "This module computes the levenshtein distance for list of longs",  /* m_doc */
+        -1,                  /* m_size */
+        LiblevenshteinMethods,    /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+};
 
-PyMODINIT_FUNC initliblevenshtein(void)
+PyMODINIT_FUNC PyInit_liblevenshtein(void)
 {
 	PyObject *m;
-	m = Py_InitModule("liblevenshtein", LiblevenshteinMethods);
+	m = PyModule_Create(&moduledef);
 	
-	if (m == NULL)
-		return;
+	return m;
 }
 
 

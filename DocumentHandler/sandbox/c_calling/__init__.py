@@ -41,12 +41,12 @@ def main():
 
     # Confirm the results. Note that ctypes.c_float objects need their 'value'
     # field accessed to get the Python float value.
-    print 'The sum of',
-    print add_float1.value, 'and', add_float2.value, 'is', add_result
-    print 'The average of [',
+    print('The sum of', end=' ')
+    print(add_float1.value, 'and', add_float2.value, 'is', add_result)
+    print('The average of [', end=' ')
     for i in array_to_average:
-        print i,
-    print '] is', avg_result
+        print(i, end=' ')
+    print('] is', avg_result)
 
 
 if __name__ == '__main__':

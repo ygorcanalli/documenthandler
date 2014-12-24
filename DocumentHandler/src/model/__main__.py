@@ -12,11 +12,11 @@ def __main__(argv):
     try:
         opts, args = getopt.getopt(argv, "bdhi:o:D:", ["ifile=", "ofile=", "database="])
     except getopt.GetoptError:
-        print 'model <-b|-d> -i <inputfile> -o <outputfile> -D <databasename>'
+        print('model <-b|-d> -i <inputfile> -o <outputfile> -D <databasename>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'model <-b|-d> -i <inputfile> -o <outputfile> -D <databasename>'
+            print('model <-b|-d> -i <inputfile> -o <outputfile> -D <databasename>')
             sys.exit()
         elif opt in ("-i", "--ifile"):
             input_file = arg

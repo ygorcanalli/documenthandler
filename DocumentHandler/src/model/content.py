@@ -5,15 +5,13 @@ Created on Apr 17, 2014
 """
 import abc
 import re
-from container import List
+from .container import List
 
 
-class Content(object):
+class Content(object, metaclass=abc.ABCMeta):
     """
     classdocs
     """
-
-    __metaclass__ = abc.ABCMeta
 
     _documents = {}
     _paragraphs = {}
@@ -28,7 +26,7 @@ class Content(object):
     def create_document(cls, original_string):
         try:
             my_document = cls._documents[original_string]
-        except KeyError, e:
+        except KeyError as e:
             my_document = cls._documents[original_string] = Document(original_string)
 
         return my_document
@@ -37,7 +35,7 @@ class Content(object):
     def create_paragraph(cls, original_string):
         try:
             my_paragraph = cls._paragraphs[original_string]
-        except KeyError, e:
+        except KeyError as e:
             my_paragraph = cls._paragraphs[original_string] = Paragraph(original_string)
 
         return my_paragraph
@@ -46,7 +44,7 @@ class Content(object):
     def create_sentence(cls, original_string):
         try:
             my_sentence = cls._sentences[original_string]
-        except KeyError, e:
+        except KeyError as e:
             my_sentence = cls._sentences[original_string] = Sentence(original_string)
 
         return my_sentence
@@ -55,7 +53,7 @@ class Content(object):
     def create_word(cls, original_string):
         try:
             my_word = cls._words[original_string]
-        except KeyError, e:
+        except KeyError as e:
             my_word = cls._words[original_string] = Word(original_string)
 
         return my_word
@@ -64,7 +62,7 @@ class Content(object):
     def create_char(cls, original_string):
         try:
             my_char = cls._chars[original_string]
-        except KeyError, e:
+        except KeyError as e:
             my_char = cls._chars[original_string] = Char(original_string)
 
         return my_char

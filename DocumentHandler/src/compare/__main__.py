@@ -5,9 +5,7 @@ import getopt
 
 import os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'src'))
-
-from structural_similarity import *
+from .structural_similarity import *
 from model import *
 from time import time
 from util import *
@@ -22,11 +20,11 @@ def __main__(argv):
     try:
         opts, args = getopt.getopt(argv, "D:A:B:s:t:o:", ["database=", "database_b=","database_b=","sfile=", "tfile=", "outputfile="])
     except getopt.GetoptError:
-        print 'model -s <stfile> -t <tfile> -o <outputfile>'
+        print('model -s <stfile> -t <tfile> -o <outputfile>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'model -s <stfile> -t <tfile> -o <outputfile>'
+            print('model -s <stfile> -t <tfile> -o <outputfile>')
             sys.exit()
         elif opt in ("-s", "--sfile"):
             s_file = arg
