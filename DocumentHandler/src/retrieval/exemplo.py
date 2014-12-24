@@ -1,20 +1,95 @@
 from pprint import pprint
-from numpy import nonzero, zeros
+import numpy as np
 from extractors_per_dataset.co_derivative_extractor import extract_co_derivative_to_ranking_task
-from transformers.retrieval_task import RetrievalTask
 import time
 from model.content import Document
 from collections import OrderedDict
-from compare.structural_similarity import *
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from compare.structural_similarity import list_of_paragraphs, bag_of_words
-from Onboard import WordSuggestions
+from sklearn.metrics import metrics
+
+def interpolated_precision_recall_curve(queries_ranking, queries_similarities, relevants):
+    
+    queries_count = np.shape(queries_ranking)[0]
+    interpolated_precision = np.zeros(11,dtype = np.float128) 
+    
+    for qindex in range(0,queries_count):
+
+        tp = 0
+        precision, recall = [0],[0]
+        
+        relevants_count = np.shape(np.nonzero(relevants[qindex]))[1]
+        retrieved_count = 1
+        
+        for ranki in queries_ranking[qindex]:
+            if (queries_similarities[qindex][ranki] > 0) and (relevants[qindex][ranki] == 1):
+                tp += 1
+                
+            precisioni = tp / retrieved_count
+            if relevants_count == 0:
+                recalli = 1
+            else:
+                recalli = tp / relevants_count
+            
+            retrieved_count += 1
+
+            precision += [precisioni]
+            recall += [recalli]
+              
+        # query's 11 levels of precision recall precision_levels[0] = max precision in recall > 0                  
+        precision_levels = []
+        
+        for i in range(0,11):
+            prec_ati = 0
+            for j in range(0,len(recall)):
+                if i <= recall[j]*10:
+                    prec_ati =  max(prec_ati,precision[j])
+                    
+            precision_levels.append(prec_ati)
+            interpolated_precision[i] += prec_ati/queries_count
+            
+        del precision
+        del recall
+                 
+    
+    auc = float("{0:1.4f}".format(metrics.auc([0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],interpolated_precision)))
+    
+    return interpolated_precision, auc
+
+def highest_false_match_and_separation(queries_ranking, queries_similarities, relevants):
+    # rows = queries, col[0] = HFM and col[1] = SEP
+    hfm_sep_matrix = np.zeros((relevants.shape[0],2))
+    
+    for queryi_index in range(0,relevants.shape[0]):
+        queryi_ranking = queries_ranking[queryi_index]
+        queryi_similarities = queries_similarities[queryi_index]
+        max_similarity = queryi_similarities[queryi_ranking[0]]
+        
+        lowest_relevant = -1
+        highest_irrelevant = -1
+        
+        for j in range(0,relevants.shape[1]):
+            ranki_pos = queryi_ranking[j]
+            
+            if (highest_irrelevant == -1 and relevants[queryi_index][ranki_pos] == 0):
+                highest_irrelevant = ranki_pos
+                
+            if (relevants[queryi_index][ranki_pos] == 1):
+                lowest_relevant = ranki_pos
+                
+        LTM = 100*queryi_similarities[lowest_relevant] / max_similarity
+        HFM = 100*queryi_similarities[highest_irrelevant] / max_similarity
+        SEP = LTM - HFM
+        
+        hfm_sep_matrix[queryi_index][0] = HFM
+        hfm_sep_matrix[queryi_index][1] = SEP
+        
+    return hfm_sep_matrix
 
 def extract_dev_set(queries,corpus_index,target,num_queries = None):
     if (num_queries == None):
         num_queries = len(queries)
         
-    queries_teste, corpus_index_teste, target_teste = [], [], zeros((num_queries,num_queries*9))
+    queries_teste, corpus_index_teste, target_teste = [], [], np.zeros((num_queries,num_queries*9))
     
     for i in range(0,num_queries):
         queries_teste.append(queries[i])
@@ -38,39 +113,16 @@ if __name__ == '__main__':
     print("#queries:",target.shape[0],",#doc_index:",target.shape[1])
     
     #o dataset inteiro 
-#     queries_teste, corpus_index_teste, target_teste = extract_dev_set(queries, corpus_index, target)
+    #queries_teste, corpus_index_teste, target_teste = extract_dev_set(queries, corpus_index, target)
     # 2 consultas e seus relevantes
-    queries_teste, corpus_index_teste, target_teste = extract_dev_set(queries, corpus_index, target,3)      
+    queries_teste, corpus_index_teste, target_teste = extract_dev_set(queries, corpus_index, target,2)      
 
-    #tokenizando com o sckitlearn (bow)
-       
-    cv = CountVectorizer(ngram_range=(1,1)) # extraindo o bow
-    index_td_matrix = cv.fit_transform(corpus_index_teste, target_teste) #matrix termo-documento do indice
-    queries_td_matrix = cv.transform(queries_teste) #matrix termo-documento das consultas
     
-    distance = 'cosine'
-    jobs = 1
-    rt = RetrievalTask(distance,jobs,index_td_matrix)
-    '''
-    start_time = time.process_time()
-    queries_ranking, queries_similarities = rt.execute_retrieval(queries_td_matrix, target_teste)
-    ranking_elapsed_time = time.process_time() - start_time
-        
-    interpolated_precision, auc = rt.interpolated_precision_recall_curve(queries_ranking, queries_similarities, target_teste)
-    hfm_sep_matrix = rt.highest_false_match_and_separation(queries_ranking, queries_similarities, target_teste)
-    
-    print("auc(%s) = %4.2f in %d s"%(distance,auc,ranking_elapsed_time))
-        
-    for queryi_index in range (0,hfm_sep_matrix.shape[0]):
-        print("query(%d).(HFM|SEP) = (%4.4f | %4.4f) "%(queryi_index,hfm_sep_matrix[queryi_index][0],hfm_sep_matrix[queryi_index][1]))
-
-
-    print("\'Resultados Ygor\'")
-    '''
     '''
     BAG OF WORDS
     '''
-    queries_similarities = zeros( (len(queries_teste),len(corpus_index_teste)))
+    distance = "bag of words"
+    queries_similarities = np.zeros( (len(queries_teste),len(corpus_index_teste)))
     queries_ranking = []
     ranking_elapsed_time = 0
     # execucao da comparacao hierarquica que gerara queries_similarities
@@ -84,23 +136,21 @@ if __name__ == '__main__':
     
             start_time = time.process_time()
             # Fill the result map with similaritys
-            simil = list_of_paragraphs(query, document, granule_alignment_funcion=bag_of_words, threshold=0.8)        
+            simil = bag_of_words(query, document)#, granule_alignment_funcion=bag_of_words, threshold=0.8)        
             ranking_elapsed_time += time.process_time() - start_time
             
             queries_similarities[i][j] = simil
             queries_ranking[i][j] = simil
         #ordena a o ranking para i
         queries_ranking[i] = OrderedDict(sorted(queries_ranking[i].items(), key=lambda t: t[1], reverse=True)) 
-    #queries_ranking, queries_similarities = ...
-
-    distance = "bag of words"
-    
-    interpolated_precision, auc = rt.interpolated_precision_recall_curve(queries_ranking, queries_similarities, target_teste)
-    hfm_sep_matrix = rt.highest_false_match_and_separation(queries_ranking, queries_similarities, target_teste)
+        
+    #pprint(target_teste)
+    #pprint(queries_ranking)
+    #pprint(queries_similarities)
+    interpolated_precision, auc = interpolated_precision_recall_curve(queries_ranking, queries_similarities, target_teste)
+    hfm_sep_matrix = highest_false_match_and_separation(queries_ranking, queries_similarities, target_teste)
     
     print("auc(%s) = %4.2f in %d s"%(distance,auc,ranking_elapsed_time))
     pprint(interpolated_precision)    
     for queryi_index in range (0,hfm_sep_matrix.shape[0]):
         print("query(%d).(HFM|SEP) = (%4.4f | %4.4f) "%(queryi_index,hfm_sep_matrix[queryi_index][0],hfm_sep_matrix[queryi_index][1]))
-        
-    
