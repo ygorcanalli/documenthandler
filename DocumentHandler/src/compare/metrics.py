@@ -37,14 +37,14 @@ def interpolated_precision_recall_curve(queries_ranking, queries_similarities, r
         # query's 11 levels of precision recall precision_levels[0] = max precision in recall > 0                  
         precision_levels = []
         
-        for i in range(0,11):
+        for rank in range(0,11):
             prec_ati = 0
             for j in range(0,len(recall)):
-                if i <= recall[j]*10:
+                if rank <= recall[j]*10:
                     prec_ati =  max(prec_ati,precision[j])
                     
             precision_levels.append(prec_ati)
-            interpolated_precision[i] += prec_ati/queries_count
+            interpolated_precision[rank] += prec_ati/queries_count
             
         del precision
         del recall

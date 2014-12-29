@@ -78,16 +78,16 @@ def compare_two_databases(database_name_a, database_name_b):
 
     start_time = time()
 
-    for i in range(0, len(documents_a)):
+    for rank in range(0, len(documents_a)):
         for j in range(0, len(documents_b)):
             # Get the words
-            s_document = documents_a.__getitem__(i)
+            s_document = documents_a.__getitem__(rank)
             t_document = documents_b.__getitem__(j)
 
             simil = align_words(s_document, t_document);
 
             # results accumulation
-            output_string += '[' + file_names_a.__getitem__(i) + '][' + file_names_b.__getitem__(j) + ']=' + "%0.4f" % simil + '\n'
+            output_string += '[' + file_names_a.__getitem__(rank) + '][' + file_names_b.__getitem__(j) + ']=' + "%0.4f" % simil + '\n'
     
     end_time = time()
     spent_time = (end_time - start_time)
@@ -114,16 +114,16 @@ def compare_database(database_name):
 
     start_time = time()
 
-    for i in range(0, len(documents)):
-        for j in range(i+1, len(documents)):
+    for rank in range(0, len(documents)):
+        for j in range(rank+1, len(documents)):
             # Get the words
 
 
             # Call function
-            simil = list_of_paragraphs(documents[i], documents[j], granule_alignment_funcion=bag_of_words, threshold=0.8)
+            simil = list_of_paragraphs(documents[rank], documents[j], granule_alignment_funcion=bag_of_words, threshold=0.8)
 
             # results accumulation
-            output_string += '[' + file_names.__getitem__(i) + '][' + file_names.__getitem__(j) + ']=' + "%0.4f" % simil + '\n'
+            output_string += '[' + file_names.__getitem__(rank) + '][' + file_names.__getitem__(j) + ']=' + "%0.4f" % simil + '\n'
     
     end_time = time()
     spent_time = (end_time - start_time)
@@ -148,10 +148,10 @@ def compare_pair(s_file, t_file):
 
     start_time = time()
 
-    for i in range(0, len(s_paragraphs)):
-        for j in range(i+1, len(t_paragraphs)):
+    for rank in range(0, len(s_paragraphs)):
+        for j in range(rank+1, len(t_paragraphs)):
             # Get the paragraphs
-            s_paragraphsi = s_paragraphs.__getitem__(i)
+            s_paragraphsi = s_paragraphs.__getitem__(rank)
             t_paragraphsi = t_paragraphs.__getitem__(j)
 
             s_words = s_paragraphsi.get_words()
@@ -166,7 +166,7 @@ def compare_pair(s_file, t_file):
             simil = similarity(s_len, t_len, distance)
 
             #  results accumulation
-            output_string += '[' + str(i) + '][' + str(j) + ']=' + "%0.4f" % simil + '\n'
+            output_string += '[' + str(rank) + '][' + str(j) + ']=' + "%0.4f" % simil + '\n'
 
     end_time = time()
     spent_time = (end_time - start_time)

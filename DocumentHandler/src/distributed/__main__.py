@@ -26,46 +26,27 @@ RESULTS = 1
 INFO = 2
 OK = 3
 
-def split_workload(workload, n_workers):
+def split_corpus_index(corpus_index, n_workers, rank):
 
-    splited_workload = []
-
-    len_workload = len(workload)
-    # floor division
-    workload_split_size = len_workload // n_workers
-    remainder_workload = len_workload % n_workers
-
-    for i in range(0, n_workers):
-        
-        if i < remainder_workload:
-            begin = workload_split_size*i + i
-        else:
-            begin = workload_split_size*i + remainder_workload
-
-        if i < remainder_workload: 
-            end = begin + workload_split_size + 1
-        else:
-            end = begin + workload_split_size
-
-        splited_workload.append(workload[begin:end])
-
-    return splited_workload
-
-
-def create_list_of_pairs(queries_path, corpus_path):
-    # List files in database
-    queries = util.list_dir(queries_path, "*.pkl")
-    corpus_index = util.list_dir(corpus_path, "*.pkl")
+    length = len(corpus_index)
     
-    pairs = []
-    for query in queries:
-        for document in corpus_index:
-            pairs.append( (query, document) )
-    return queries, corpus_index, pairs
+    # floor division
+    split_size = length // n_workers
+    remainder = length % n_workers
 
-def run_alignment(alignment_mode, query, document, alignment_function): 
-    return None
+    if rank < remainder:
+        begin = split_size*rank + rank
+    else:
+        begin = split_size*rank + remainder
 
+    if rank < remainder: 
+        end = begin + split_size + 1
+    else:
+        end = begin + split_size
+
+    splited_corpus_index = corpus_index[begin:end]
+
+    return splited_corpus_index
 
 def master(n_workers, config):
     
@@ -75,18 +56,18 @@ def master(n_workers, config):
     target_path = config["target_path"]
     target = json.load(open(target_path, "r"))
     target = np.array(target)
-        
-    queries, corpus_index, pairs = create_list_of_pairs(queries_path, corpus_index_path)
-    splited_workload = split_workload(pairs, n_workers)
-    results = {}
     
-    start_time = time() 
-    # Send workload to workers
-    for n_retrived in range(0, n_workers):
-        comm.send(splited_workload.__getitem__(n_retrived), dest = n_retrived + 1, tag=WORKLOAD)
-
+    # List files in database
+    queries = util.list_dir(queries_path, "*.pkl")
+    corpus_index = util.list_dir(corpus_index_path, "*.pkl")
+             
+    start_time = time()
+    
+    # work on first slice
+    results = do_work(n_workers, config)
+    
     # Receive results and merge the result map
-    for n_retrived in range(0, n_workers):
+    for rank in range(0, n_workers - 1):
         worker_results = comm.recv(source=MPI.ANY_SOURCE, tag=RESULTS)
         results.update(worker_results)
 
@@ -131,14 +112,12 @@ def master(n_workers, config):
     info["workers"] = []
     
     # Recive info from workers 
-    for n_retrived in range(0, n_workers):
+    for i in range(0, n_workers - 1):
         info["workers"].append(comm.recv(source=MPI.ANY_SOURCE, tag=INFO))
     
     return interpolated_precision, hfm_sep_matrix, info
 
-
-def worker(config):
-
+def do_work(n_workers, config):
     queries_path = config["queries_path"]
     corpus_index_path = config["corpus_index_path"]
     compare_mode = getattr(structural_similarity, config["compare_mode"])
@@ -147,32 +126,38 @@ def worker(config):
         
     if "granule_mode" in config and "threshold" in config:
         granule_mode = getattr(structural_similarity, config["granule_mode"])
-        threshold = config["threshold"]
-        
+        threshold = config["threshold"]  
     
     corpus_index = {}
-    queries = {}
+    queries = util.list_dir(queries_path, "*.pkl")
     results = {}
-    spent_time = 0
-    workload = comm.recv(source=0, tag=WORKLOAD)
-
-    # Load corpus_index from pickle avoiding repeated corpus_index
-    for query, document in workload:
-
-        if not query in queries:
-            queries[query] = model.document_from_pkl(os.path.join(queries_path, query))
-
-        if not document in corpus_index:
-            corpus_index[document] = model.document_from_pkl(os.path.join(corpus_index_path, document))
-
-        # Fill the result map with similarities
-        start_time = time()
-        simil = compare_mode(queries[query], corpus_index[document], granule_alignment_funcion=granule_mode, threshold=threshold)        
-        end_time = time()
-        spent_time += (end_time - start_time)
         
-        results[ (query, document) ] = simil
+    corpus_index_slice = split_corpus_index(corpus_index, n_workers, rank)
 
+    # Load corpus_index from pickle
+    for document in corpus_index_slice:
+        corpus_index[document] = model.document_from_pkl(os.path.join(corpus_index_path, document))
+        
+    for query_path in queries:
+        #Load query from pickle
+        query = model.document_from_pkl(os.path.join(queries_path, query_path))
+        
+        for document in corpus_index:          
+            # Fill the result map with similarities        
+            simil = compare_mode(queries[query], corpus_index[document], granule_alignment_funcion=granule_mode, threshold=threshold)        
+            results[ (query, document) ] = simil
+    
+    return results
+
+def worker(n_workers, config):
+    
+    start_time = time()
+    
+    # work on rank-th slice
+    results = do_work(n_workers, config)
+    end_time = time()
+    spent_time = (end_time - start_time)
+    
     # Send result to master
     comm.send(results, 0, tag=RESULTS)
     
@@ -228,10 +213,10 @@ def __main__(argv):
             config_file.close()
     
     if rank == 0:
-        interpolated_precision, hfm_sep_matrix, info = master(size - 1, config)
+        interpolated_precision, hfm_sep_matrix, info = master(size, config)
         write_output_results(interpolated_precision, hfm_sep_matrix, info, config)
     else:
-        worker(config)
+        worker(size, config)
     
 
 if __name__ == "__main__":

@@ -57,14 +57,14 @@ def cos_similarity(list_s, list_t):
     array_s = np.zeros(len(keys))
     array_t = np.zeros(len(keys))
     
-    i = 0
+    rank = 0
     
     for k in keys:
         if k in bag_s:
-            array_s[i] = bag_s.get(k)
+            array_s[rank] = bag_s.get(k)
         if k in bag_t:
-            array_t[i] = bag_t.get(k)
-        i = i + 1
+            array_t[rank] = bag_t.get(k)
+        rank = rank + 1
     
     dotted = np.dot(array_s, np.transpose(array_t))
     norms = np.linalg.norm(array_s) * np.linalg.norm(array_t)

@@ -114,28 +114,28 @@ def _hierarchical_cossine_similarity(s_itens, t_itens, granule_alignment_funcion
                         # initialize bucket
                         t_similarity_bucket[t_item] = Set([s_item]) 
                         
-    i = 0
+    rank = 0
     
     # build the arrays to cossine sinilarity
     for k in keys:
         # if the item is in document s, counts the normal occurrences
         if k in s_bag:
-            array_s[i] = s_bag.get(k)
+            array_s[rank] = s_bag.get(k)
         # if the item is not in s, accumulate the occurrence of itens in s that are similar to that item in t (that is, the documents in t_bucket for the item) 
         else:
             if k in t_similarity_bucket:
                 for b in t_similarity_bucket[k]:
-                    array_s[i] += s_bag.get(b)
+                    array_s[rank] += s_bag.get(b)
                     
         # if the item is in document t, counts the normal occurrences
         if k in t_bag:
-            array_t[i] = t_bag.get(k)
+            array_t[rank] = t_bag.get(k)
         # if the item is not in t, accumulate the occurrence of itens in t that are similar to that item in s (that is, the documents in s_bucket for the item) 
         else:       
             if k in s_similarity_bucket:
                 for b in s_similarity_bucket[k]:
-                    array_t[i] += t_bag.get(b)
-        i = i + 1
+                    array_t[rank] += t_bag.get(b)
+        rank = rank + 1
                            
     dotted = np.dot(array_s, np.transpose(array_t))
     norms = np.linalg.norm(array_s) * np.linalg.norm(array_t)

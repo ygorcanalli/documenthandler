@@ -114,8 +114,8 @@ class Content(object, metaclass=abc.ABCMeta):
         len_list = len(self.elements.list)
 
         # Iterate over elements, exept the last
-        for i in range(0, len_list-1):
-            result += str(self.elements.list[i]) + self._default_separator
+        for rank in range(0, len_list-1):
+            result += str(self.elements.list[rank]) + self._default_separator
         # Cocatenate with the last element
         if(len_list > 0):
             result += str(self.elements.list[len_list-1])
