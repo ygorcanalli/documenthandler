@@ -37,7 +37,7 @@ def document_from_pkl(input_file_name):
 
 
 def database_dump(database_name):
-    plain_directory_name = os.path.join(database_name, "/plain/")
-    pickled_directory_name = os.path.join(database_name, "/pickled/")
+    plain_directory_name = os.path.join(database_name, "plain")
+    pickled_directory_name = os.path.join(database_name, "pickled")
     for file_path in list_dir(plain_directory_name, "*.txt"):
         document_dump(os.path.join(plain_directory_name, file_path), os.path.join(pickled_directory_name, file_path.replace(".txt", ".pkl")))
