@@ -128,21 +128,22 @@ def do_work(n_workers, config):
         granule_mode = getattr(structural_similarity, config["granule_mode"])
         threshold = config["threshold"]  
     
-    corpus_index = {}
+    corpus_index = util.list_dir(corpus_index_path, "*.pkl")
     queries = util.list_dir(queries_path, "*.pkl")
     results = {}
         
     corpus_index_slice = split_corpus_index(corpus_index, n_workers, rank)
 
+    pickled_corpus_index = {}
     # Load corpus_index from pickle
     for document in corpus_index_slice:
-        corpus_index[document] = model.document_from_pkl(os.path.join(corpus_index_path, document))
+        pickled_corpus_index[document] = model.document_from_pkl(os.path.join(corpus_index_path, document))
         
     for query_path in queries:
         #Load query from pickle
         query = model.document_from_pkl(os.path.join(queries_path, query_path))
         
-        for document in corpus_index:          
+        for document in pickled_corpus_index:          
             # Fill the result map with similarities        
             simil = compare_mode(queries[query], corpus_index[document], granule_alignment_funcion=granule_mode, threshold=threshold)        
             results[ (query, document) ] = simil
