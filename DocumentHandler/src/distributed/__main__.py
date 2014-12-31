@@ -135,29 +135,21 @@ def do_work(n_workers, config):
     corpus_index_slice = split_corpus_index(corpus_index, n_workers, rank)
 
     pickled_corpus_index = {}
-<<<<<<< HEAD
     
     i = 1
-=======
->>>>>>> branch 'master' of https://github.com/ygorcanalli/documenthandler
+
     # Load corpus_index from pickle
     for document in corpus_index_slice:
         pickled_corpus_index[document] = model.document_from_pkl(os.path.join(corpus_index_path, document))
-<<<<<<< HEAD
+
         print("[Rank %d] %d X %d" % (rank, i, len(corpus_index_slice)))
         i += 1
-=======
->>>>>>> branch 'master' of https://github.com/ygorcanalli/documenthandler
         
     for query_path in queries:
         #Load query from pickle
         query = model.document_from_pkl(os.path.join(queries_path, query_path))
         
-<<<<<<< HEAD
         for document_path, document in pickled_corpus_index.items():          
-=======
-        for document in pickled_corpus_index:          
->>>>>>> branch 'master' of https://github.com/ygorcanalli/documenthandler
             # Fill the result map with similarities        
             simil = compare_mode(query, document, granule_alignment_funcion=granule_mode, threshold=threshold)
             
